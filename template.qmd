@@ -1,6 +1,6 @@
 ---
 title: "Final Project Report"
-author: "Your Name (NetID)"
+author: "Jonah Schaechter (JS336)"
 jupyter: julia-1.10
 date: 2024-04-30
 
@@ -42,8 +42,9 @@ execute:
 
 ## Problem Statement
 
-Clearly define the problem statement that your chosen feature aims to address.
-Explain the significance of this problem in the context of climate risk management.
+So far, our simulations have considered the Net Present Value of home elevation under the assumption that homeowners will pay for their home elevation out of pocket.  In reality, people have to chose between paying out of pocket (if this is even something they can afford), taking out a loan, or saving up.  
+
+Each of these options has tradeoffs in upfront cost and in NPV.  In this paper, we will analize these tradeoffs. 
 
 ## Selected Feature
 
