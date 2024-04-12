@@ -61,6 +61,41 @@ Explain how these articles contribute to the justification of your selected feat
 
 ## Implementation
 
+```{julia}
+using CSV
+using DataFrames
+using DataFramesMeta
+using Distributions
+using LaTeXStrings
+using Metaheuristics
+using Plots
+using Random
+using Unitful
+
+Plots.default(; margin=5Plots.mm)
+```
+
+```{julia}
+using Revise
+using HouseElevation
+```
+
+```{julia}
+#| output: false
+house = let
+    haz_fl_dept = CSV.read("data/haz_fl_dept.csv", DataFrame) # read in the file
+    desc = "one story, Contents, fresh water, short duration"
+    row = @rsubset(haz_fl_dept, :Description == desc)[1, :] # select the row I want
+    area = 500u"ft^2"
+    height_above_gauge = 12u"ft"
+    House(row; area=area, height_above_gauge=height_above_gauge, value_usd=250_000)
+end
+
+p = ModelParams(; house=house, years=2024:2083)
+```
+
+
+
 You should make your modifications in either the `HouseElevation` or `ParkingGarage` module.
 Detail the steps taken to implement the selected feature and integrate it into the decision-support tool.
 Include code snippets and explanations where necessary to clarify the implementation process.
