@@ -44,7 +44,7 @@ execute:
 
 So far, our simulations have considered the Net Present Value of home elevation under the assumption that homeowners will pay for their home elevation out of pocket.  In reality, people have to chose between paying out of pocket (if this is even something they can afford), taking out a loan, or saving up.  
 
-Each of these options has tradeoffs in upfront cost and in NPV.  In this paper, we will analize these tradeoffs. 
+Each of these options has tradeoffs in total cost, yearly cost, the cost of damages,and in NPV.  In this paper, we will analize these tradeoffs. 
 
 ## Selected Feature
 
@@ -94,6 +94,3 @@ Summarize the key findings of your project and reiterate the significance of you
 Discuss the broader implications of your work for climate risk management and the potential for further research in this area.
 
 # References
-
-:::{#refs}
-:::
