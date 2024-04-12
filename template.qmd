@@ -84,10 +84,10 @@ using HouseElevation
 #| output: false
 house = let
     haz_fl_dept = CSV.read("data/haz_fl_dept.csv", DataFrame) # read in the file
-    desc = "one story, Contents, fresh water, short duration"
-    row = @rsubset(haz_fl_dept, :Description == desc)[1, :] # select the row I want
-    area = 500u"ft^2"
-    height_above_gauge = 12u"ft"
+    desc = "Two-story, no basement in Galveston"
+    row = @rsubset(haz_fl_dept, :Column1 == 98)[1, :,] # select the row I want
+    area = 1500u"ft^2"
+    height_above_gauge = height_above_gauge = 5u"ft"  
     House(row; area=area, height_above_gauge=height_above_gauge, value_usd=250_000)
 end
 
