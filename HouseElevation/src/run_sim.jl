@@ -5,6 +5,19 @@ function trapz(x, y)
     return sum((x[2:end] - x[1:(end - 1)]) .* (y[2:end] + y[1:(end - 1)])) * 0.5
 end
 
+
+function annual_loan_cost(p, r, n)
+    #P is principle amount, r is rate, n is number of years
+    a = p * ( (r * ((1+r)^n) ) / ( (1+r)^n - 1 ) )
+    return a #a is annual payments
+end
+
+function total_loan_cost(annual_cost, n) #can apply discount rate to this later
+    #n is number of years of loan 
+    print("total cost ran")
+    return annual_cost*n 
+end
+
 """
 Run the model for a given action and SOW
 
