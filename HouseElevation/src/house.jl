@@ -149,10 +149,22 @@ function (calculator::ElevationCostCalculator)(house::House, Δh_ft::T) where {T
     else  
         #In the future we can add discount rate to our loan payments,
         #for now we're just exploring so we'll go without that
+        annual_payment = annual_loan_cost(cost, house.loan_rate, house.loan_years)
+        total_loan_cost = (annual_payment, house.loan_years)
+        return total_loan_cost
 
 
         
 end
+
+function annual_loan_cost(p, r, n)
+    #P is principle amount, r is rate, n is number of years
+    a = p * ( (r * ((1+r)^n) ) / ( (1+r)^n - 1 ) )
+    return a #a is annual payments
+
+function total_loan_cost(annual_cost, n) #can apply discount rate to this later
+        #n is number of years of loan 
+        return annual_cost*n 
 
 # Define the method for calculating the elevation cost
 function (calculator::ElevationCostCalculator)(
