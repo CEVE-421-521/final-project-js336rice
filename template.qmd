@@ -103,6 +103,9 @@ house = let
     row = @rsubset(haz_fl_dept, :Column1 == 98)[1, :,] # select the row I want
     area = 1500u"ft^2"
     height_above_gauge = height_above_gauge = 5u"ft"  
+    loan = 1  #Changed
+    loan_years = 5 #Changed 
+    loan_rate = 0.05 #Changed
     House(row; area=area, height_above_gauge=height_above_gauge, value_usd=250_000)
 end
 

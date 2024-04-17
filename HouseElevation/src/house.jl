@@ -42,6 +42,9 @@ function House(
     area::Unitful.Area,
     height_above_gauge::Unitful.Length,
     value_usd::T,
+    loan::L  #Changed
+    loan_years::loan_years #Changed 
+    loan_rate::loan_rate #Changed
 ) where {T<:Real}
 
     # get metadata fields
@@ -87,6 +90,9 @@ function House(
         source=source,
         description=description,
         comment=comment,
+        loan=loan #changed
+        loan_years=loan_years #Changed 
+        loan_rate=loan_rate #Changed
     )
 end
 
@@ -137,7 +143,15 @@ function (calculator::ElevationCostCalculator)(house::House, Δh_ft::T) where {T
     base_cost = (10000 + 300 + 470 + 4300 + 2175 + 3500) # in USD
     rate = calculator.itp(Δh_ft)
     cost = base_cost + house.area_ft2 * rate
-    return cost
+    
+    if house.loan == 0  #Added this section, used to just return cost 
+        return cost
+    else  
+        #In the future we can add discount rate to our loan payments,
+        #for now we're just exploring so we'll go without that
+
+
+        
 end
 
 # Define the method for calculating the elevation cost
