@@ -6,9 +6,9 @@ using Unitful
 @kwdef struct Finance{T<:Real}
  
     #loan stuff
-    loan::L  #Changed
-    loan_years::loan_years #Changed 
-    loan_rate::loan_rate #Changed
+    loan::T  #Changed
+    loan_years::T #Changed 
+    loan_rate::T #Changed
 end
 
 function annual_loan_cost(p, r, n)
