@@ -34,9 +34,10 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
 
     if fin.loan == 0  #if paying out of pocket
         upfront_cost = construction_cost
+        annual_cost = 0
     else   #if taking out a loan
         annual_cost = annual_loan_cost(construction_cost, fin.loan_rate, fin.loan_years)
-        upfront_cost = annual_cost  #Have to pay for the first year of the loan/down payment
+        upfront_cost = 0  #Have to pay for the first year of the loan/down payment?
     end
   
         
@@ -48,9 +49,9 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
 
     eads = map(p.years) do year
         #print(year)
-        year_index = year - minimum(p.years)  #This is probably not an efficient way to do it since 
-                                                #something similar is already calculated below 
-        if year_index < fin.loan_years  #if we're still paying off the loan, set annual cost to payment amount
+        year_index = year - minimum(p.years)  #This is probably not an efficient way to do it since something similar is already calculated below 
+
+        if year_index <= fin.loan_years  #if we're still paying off the loan, set annual cost to payment amount
             annual_cost = annual_cost
         else
             annual_cost = 0 #if not, set it to 0
