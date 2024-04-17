@@ -98,17 +98,6 @@ Looking at it on street view, the house appears to be on concrete blocks about 6
 Row 98 from the data is two-story, no basement in Galveston, so we'll be using that for our depth-damage curve.  The home is on concrete blocks, so we can be confident that it doesn't have a basement.
 
 
-```{julia}
-house = let
-    haz_fl_dept = CSV.read("data/haz_fl_dept.csv", DataFrame) # read in the file
-    desc = "Two-story, no basement in Galveston"
-    row = @rsubset(haz_fl_dept, :Column1 == 98)[1, :,] # select the row I want
-    area = 1500u"ft^2"
-    height_above_gauge = 5u"ft"  #Previously used 4.91, had to round up to 5 to make it work with functions
-    House(row; area=area, height_above_gauge=height_above_gauge, value_usd=250_000)
-end
-```
-
 
 ```{julia}
 #| output: false
@@ -146,8 +135,6 @@ finance = let
     loan_rate = 1 #Cha
     Finance(; loan=loan, loan_years=loan_years, loan_rate=loan_rate)
 end
-
-
 
 p = ModelParams(; house=house, years=2024:2083, finance=finance)
 ```

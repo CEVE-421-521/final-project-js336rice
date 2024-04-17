@@ -3,7 +3,7 @@ using DataFrames
 using Interpolations
 using Unitful
 
-@kwdef struct Finance#{T<:Real}
+@kwdef struct Finance{T<:Real}
     #loan stuff
     loan::T  #Changed
     loan_years::T #Changed 

@@ -12,13 +12,11 @@ using StatsBase: mean
 
 
 
-
-
 """ModelParams contains all the variables that are constant across simulations"""
 @kwdef struct ModelParams
     house::House
     years::Vector{Int}
-    finance::Finance
+    finance::Finance#{Int}
 end
 
 """A SOW contains all the variables that may vary from one simulation to the next"""
