@@ -22,6 +22,10 @@ end
     area_ft2::T
     value_usd::T
     height_above_gauge_ft::T
+    #loan stuff
+    loan::L  #Changed
+    loan_years::loan_years #Changed 
+    loan_rate::loan_rate #Changed
 
     # depth-damage
     ddf::DepthDamageFunction
@@ -42,8 +46,8 @@ function House(
     area::Unitful.Area,
     height_above_gauge::Unitful.Length,
     value_usd::T,
-    loan::L  #Changed
-    loan_years::loan_years #Changed 
+    loan::L,  #Changed
+    loan_years::loan_years, #Changed 
     loan_rate::loan_rate #Changed
 ) where {T<:Real}
 
@@ -90,8 +94,8 @@ function House(
         source=source,
         description=description,
         comment=comment,
-        loan=loan #changed
-        loan_years=loan_years #Changed 
+        loan=loan, #changed
+        loan_years=loan_years, #Changed 
         loan_rate=loan_rate #Changed
     )
 end
