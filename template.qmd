@@ -132,7 +132,7 @@ end
 finance = let
     loan = 1  #Changed
     loan_years = 5 #Changed 
-    loan_rate = 1 #Cha
+    loan_rate = 1 #Changed
     Finance(; loan=loan, loan_years=loan_years, loan_rate=loan_rate)
 end
 
@@ -269,7 +269,7 @@ plot(
     label="First $(N_SOW_opt) SOWs",
     marker=:circle,
 )
-plot!(elevations_try, npvs_moore ./ 1000; title="Our of Pocket Payment", label="First $(N_more) SOWs", marker=:circle)
+plot!(elevations_try, npvs_moore ./ 1000; title="Out of Pocket Payment", label="First $(N_more) SOWs", marker=:circle)
 vline!([minimizer(result)]; label="Optimal", linestyle=:dash)
 ```
 

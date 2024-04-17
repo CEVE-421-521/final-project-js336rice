@@ -125,10 +125,10 @@ end
 function (calculator::ElevationCostCalculator)(house::House, Δh_ft::T) where {T<:Real}
 
     # cannot lower the house
-    Δh_ft < 0.0 && throw(DomainError(Δh, "Cannot lower the house"))
+    Δh_ft < 0.0 && throw(DomainError(Δh_ft, "Cannot lower the house"))
 
     # cannot elevate >14ft
-    Δh_ft > 14.0 && throw(DomainError(Δh, "Cannot elevate >14ft"))
+    Δh_ft > 14.0 && throw(DomainError(Δh_ft, "Cannot elevate >14ft"))
 
     # no cost if no elevation
     Δh_ft ≈ 0.0 && return 0.0
