@@ -118,6 +118,19 @@ See Zarekarizi et al. (2020) or Doss-Gollin and Keller (2023) for details
 Zarekarizi, M., Srikrishnan, V., & Keller, K. (2020). Neglecting uncertainties biases house-elevation decisions to manage riverine flood risks. Nature Communications, 11(1), 5361. https://doi.org/10.1038/s41467-020-19188-9
 Doss-Gollin, J., & Keller, K. (2023). A subjective Bayesian framework for synthesizing deep uncertainties in climate risk management. Earth’s Future, 11(1). https://doi.org/10.1029/2022EF003044
 """
+function annual_loan_cost(p, r, n)
+    #P is principle amount, r is rate, n is number of years
+    a = p * ( (r * ((1+r)^n) ) / ( (1+r)^n - 1 ) )
+    return a #a is annual payments
+end
+
+function total_loan_cost(annual_cost, n) #can apply discount rate to this later
+    #n is number of years of loan 
+    print("total cost ran")
+    return annual_cost*n 
+end
+
+
 struct ElevationCostCalculator
     # at its heart it's just an interpolator!
     itp::Interpolations.Extrapolation
@@ -154,21 +167,11 @@ function (calculator::ElevationCostCalculator)(house::House, Δh_ft::T) where {T
         #In the future we can add discount rate to our loan payments,
         #for now we're just exploring so we'll go without that
         annual_payment = annual_loan_cost(cost, house.loan_rate, house.loan_years)
-        total_loan_cost = (annual_payment, house.loan_years)
-        return total_loan_cost
-
-
-        
+        total_cost = total_loan_cost(annual_payment, house.loan_years)
+        print("House took out a loan")
+        return total_cost 
 end
 
-function annual_loan_cost(p, r, n)
-    #P is principle amount, r is rate, n is number of years
-    a = p * ( (r * ((1+r)^n) ) / ( (1+r)^n - 1 ) )
-    return a #a is annual payments
-
-function total_loan_cost(annual_cost, n) #can apply discount rate to this later
-        #n is number of years of loan 
-        return annual_cost*n 
 
 # Define the method for calculating the elevation cost
 function (calculator::ElevationCostCalculator)(
