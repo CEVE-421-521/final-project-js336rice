@@ -17,14 +17,13 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
 
     fin = p.finance
 
-    if fin.loan = 0  #if paying out of pocket
+    if fin.loan == 0  #if paying out of pocket
         upfront_cost = construction_cost
-    elseif fin.loan = 1 #if taking out a loan
+    else   #if taking out a loan
         upfront_cost=0
         annual_cost = annual_loan_cost(construction_cost, fin.loan_rate, fin.loan_years)
-    #else #if saving up 
-    
     end
+  
         
 
     # we don't need to recalculate the steps of the trapezoidal integral for each year
@@ -38,7 +37,7 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
             annual_cost = annual_cost
         else
             annual_cost = 0 #if not, set it to 0
-
+        end
         # get the sea level for this year
         slr_ft = sow.slr(year)
 
