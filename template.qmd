@@ -80,6 +80,21 @@ using Revise
 using HouseElevation
 ```
 
+We put in our house in galveston
+
+Choosing Galveston Pier 21, Texas
+The guage is at 29° 18.6 N, 94° 47.6 W
+https://maps.app.goo.gl/GyanSMA2fp9rkVrT9
+
+Our building is 302 17th St, Galveston, TX 77550,
+Home area as estimated by google maps: 30ftx50ft home = 1500ft^2
+Home value from zillow: 247,700 (Round up to 250,000)
+
+The home is 4.41 feet or 1.34 meters above sea level in elevation.
+Looking at it on street view, the house appears to be on concrete blocks about 6 inches tall, giving it an effective height of 4.91 feet.  Round this up to 5 so that it works.
+
+Row 98 from the data is two-story, no basement in Galveston, so we'll be using that for our depth-damage curve.  The home is on concrete blocks, so we can be confident that it doesn't have a basement.
+
 ```{julia}
 #| output: false
 house = let
@@ -148,8 +163,45 @@ result = optimize(objective_function, bounds)
 We can view the minimum of the objective function with
 
 ```{julia}
-minimum(result)
+display(minimum(result))
+display(minimizer(result))
 ```
+
+
+This seems like it's working plausibly.
+Let's try now with more SOWs.
+
+```{julia}
+N_SOW_opt = 100
+sows_opt = first(sows, N_SOW_opt)
+```
+
+Since I'm using more SOWs here, I'll also increase the time limit for the optimization to three minutes.
+
+```{julia}
+options = Options(; time_limit=180.0, f_tol_rel=10.0)
+```
+
+To use options, we have to choose an algorithm.
+See list of algorithms [here](https://jmejia8.github.io/Metaheuristics.jl/stable/algorithms/).
+The `ECA` algorithm is suggested as a default, so we'll use that.
+
+```{julia}
+algorithm = ECA(; options=options)
+```
+
+Before we run the optimization, let's set a random seed.
+
+```{julia}
+Random.seed!(421521)
+result = optimize(objective_function, bounds, algorithm)
+```
+```{julia}
+display(minimum(result))
+display(minimizer(result))
+```
+
+
 
 
 You should make your modifications in either the `HouseElevation` or `ParkingGarage` module.
@@ -157,6 +209,37 @@ Detail the steps taken to implement the selected feature and integrate it into t
 Include code snippets and explanations where necessary to clarify the implementation process.
 
 ## Validation
+
+In this case, we don't really _need_ optimization -- we can use brute force.
+We can compare by plotting the objective function for a range of elevations (from 0 to 14 ft) using all SOWs.
+
+```{julia}
+#| output: false
+elevations_try = 0:0.5:14
+actions_try = Action.(elevations_try)
+
+N_more = 500
+npvs_opt = [mean([run_sim(a, sow, p) for sow in sows_opt]) for a in actions_try]
+npvs_moore = [
+    mean([run_sim(a, sow, p) for sow in first(sows, N_more)]) for a in actions_try
+]
+```
+
+and plot
+
+```{julia}
+plot(
+    elevations_try,
+    npvs_opt ./ 1000;
+    xlabel="Elevation [ft]",
+    ylabel="NPV [1000 USD]",
+    label="First $(N_SOW_opt) SOWs",
+    marker=:circle,
+)
+plot!(elevations_try, npvs_moore ./ 1000; title="Our of Pocket Payment", label="First $(N_more) SOWs", marker=:circle)
+vline!([minimizer(result)]; label="Optimal", linestyle=:dash)
+```
+
 
 As we have seen in labs, mistakes are inevitable and can lead to misleading results.
 To minimize the risk of errors making their way into final results, it is essential to validate the implemented feature.
