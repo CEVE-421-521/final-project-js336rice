@@ -15,12 +15,29 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
     # first, we calculate the cost of elevating the house
     construction_cost = elevation_cost(p.house, a.Δh_ft)
 
+    fin = p.finance
+
+    if fin.loan = 0  #if paying out of pocket
+        upfront_cost = construction_cost
+    elseif fin.loan = 1 #if taking out a loan
+        upfront_cost=0
+        annual_cost = annual_loan_cost(construction_cost, fin.loan_rate, fin.loan_years)
+    #else #if saving up 
+    
+    end
+        
+
     # we don't need to recalculate the steps of the trapezoidal integral for each year
     storm_surges_ft = range(
         quantile(sow.surge_dist, 0.0005); stop=quantile(sow.surge_dist, 0.9995), length=130
     )
 
     eads = map(p.years) do year
+
+        if year <= fin.loan_years  #if we're still paying off the loan, set annual cost to payment amount
+            annual_cost = annual_cost
+        else
+            annual_cost = 0 #if not, set it to 0
 
         # get the sea level for this year
         slr_ft = sow.slr(year)
@@ -32,11 +49,11 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         damages_frac = p.house.ddf.(depth_ft_house) ./ 100 # damage
         weighted_damages = damages_frac .* pdf_values # weighted damage
         # Trapezoidal integration of weighted damages
-        ead = trapz(storm_surges_ft, weighted_damages) * p.house.value_usd
+        ead = (trapz(storm_surges_ft, weighted_damages) * p.house.value_usd) + annual_cost
     end
 
     years_idx = p.years .- minimum(p.years)
     discount_fracs = (1 - sow.discount_rate) .^ years_idx
     ead_npv = sum(eads .* discount_fracs)
-    return -(ead_npv + construction_cost)
+    return -(ead_npv + upfront_cost)
 end

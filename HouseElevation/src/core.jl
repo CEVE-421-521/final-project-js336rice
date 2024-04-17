@@ -6,6 +6,7 @@ using StatsBase: mean
 @kwdef struct ModelParams
     house::House
     years::Vector{Int}
+    finance::Finance
 end
 
 """A SOW contains all the variables that may vary from one simulation to the next"""
