@@ -132,7 +132,7 @@ end
 finance = let
     loan = 1  #Changed
     loan_years = 5 #Changed 
-    loan_rate = 1 #Changed
+    loan_rate = 7 #note that rate here is in whole percents
     Finance(; loan=loan, loan_years=loan_years, loan_rate=loan_rate)
 end
 

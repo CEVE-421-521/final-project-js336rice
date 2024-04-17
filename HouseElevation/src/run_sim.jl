@@ -6,9 +6,11 @@ function trapz(x, y)
 end
 
 
-function annual_loan_cost(p, r, n)
+function annual_loan_cost(p, rate, n)
     #P is principle amount, r is rate, n is number of years
+    r = rate/100
     a = p * ( (r * ((1+r)^n) ) / ( (1+r)^n - 1 ) )
+    #println(a, "place", "prin", p)
     return a #a is annual payments
 end
 
@@ -33,8 +35,8 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
     if fin.loan == 0  #if paying out of pocket
         upfront_cost = construction_cost
     else   #if taking out a loan
-        upfront_cost=0
         annual_cost = annual_loan_cost(construction_cost, fin.loan_rate, fin.loan_years)
+        upfront_cost=annual_cost  #Have to pay for the first year of the loan/down payment
     end
   
         
@@ -46,7 +48,7 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
 
     eads = map(p.years) do year
 
-        if year <= fin.loan_years  #if we're still paying off the loan, set annual cost to payment amount
+        if year < fin.loan_years  #if we're still paying off the loan, set annual cost to payment amount
             annual_cost = annual_cost
         else
             annual_cost = 0 #if not, set it to 0
