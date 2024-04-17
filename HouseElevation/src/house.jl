@@ -163,13 +163,15 @@ function (calculator::ElevationCostCalculator)(house::House, Δh_ft::T) where {T
     
     if house.loan == 0  #Added this section, used to just return cost 
         return cost
+    
     else  
         #In the future we can add discount rate to our loan payments,
         #for now we're just exploring so we'll go without that
         annual_payment = annual_loan_cost(cost, house.loan_rate, house.loan_years)
         total_cost = total_loan_cost(annual_payment, house.loan_years)
         print("House took out a loan")
-        return total_cost 
+        return total_cost
+    end
 end
 
 
