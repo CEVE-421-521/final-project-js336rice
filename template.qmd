@@ -132,7 +132,7 @@ end
 finance = let
     loan = 1  #Changed
     loan_years = 5 #Changed 
-    loan_rate = 7 #note that rate here is in whole percents
+    loan_rate = 10 #note that rate here is in whole percents
     Finance(; loan=loan, loan_years=loan_years, loan_rate=loan_rate)
 end
 
@@ -169,7 +169,7 @@ end
 #| output: false
 Random.seed!(421521)
 N_SOW = 10_000
-N_SOW_opt = 10 # to start
+N_SOW_opt = 7 # to start
 sows = [draw_sow() for _ in 1:N_SOW]
 sows_opt = first(sows, N_SOW_opt)
 ```
