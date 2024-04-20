@@ -169,7 +169,7 @@ end
 #| output: false
 Random.seed!(421521)
 N_SOW = 10_000
-N_SOW_opt = 7 # to start
+N_SOW_opt = 10 # to start
 sows = [draw_sow() for _ in 1:N_SOW]
 sows_opt = first(sows, N_SOW_opt)
 ```

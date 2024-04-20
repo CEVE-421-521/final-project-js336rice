@@ -7,7 +7,7 @@ using Unitful
     #loan stuff
     loan::T  #Changed
     loan_years::T #Changed 
-    loan_rate::T #Changed
+    loan_rate::T #note that rate is in whole percents, so divide by 100 to get decimal
 end
 
 # function annual_loan_cost(p, r, n)
