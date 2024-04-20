@@ -36,6 +36,10 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         upfront_cost = construction_cost
         annual_cost = 0
     else   #if taking out a loan
+        println("rate, years")
+        println(fin.loan_rate)
+        println(fin.loan_years)
+        println(fin.loan)
         annual_cost = annual_loan_cost(construction_cost, fin.loan_rate, fin.loan_years)
         upfront_cost = 0  #Have to pay for the first year of the loan/down payment?
     end
@@ -53,7 +57,8 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
 
         if year_index <= fin.loan_years  #if we're still paying off the loan, set annual cost to payment amount
             annual_cost = annual_cost
-            #println(year_index)
+            #println(fin.loan_rate)
+            #println(annual_cost)
         else
             annual_cost = 0 #if not, set it to 0
         end
