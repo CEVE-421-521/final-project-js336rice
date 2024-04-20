@@ -9,7 +9,7 @@ end
 function annual_loan_cost(p, rate, n)
     #P is principle amount, r is rate, n is number of years
     r = rate/100
-    a = p * ( (r * ((1+r)^n) ) / ( (1+r)^n - 1 ) )
+    a = p * ( r * ((1+r)^n)  / ( (1+r)^n - 1 ) )
     #println(a, "place", "prin", p)
     return a #a is annual payments
 end
@@ -53,6 +53,7 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
 
         if year_index <= fin.loan_years  #if we're still paying off the loan, set annual cost to payment amount
             annual_cost = annual_cost
+            #println(year_index)
         else
             annual_cost = 0 #if not, set it to 0
         end
