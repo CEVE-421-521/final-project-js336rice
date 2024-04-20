@@ -204,10 +204,14 @@ Define our function to plot many financial scenarios
 ```{julia}
 function plot_many(finance_list, initial_plot)
 
+
+
+    
     for finance in finance_list
+       
         #println(finance)
         elevations_tried, npvs, min = financial_npvs(finance)
-        label = "$(finance.loan_rate)% loan, over $(finance.loan_years) years"
+        label = "$(finance.loan_rate)% loan over $(finance.loan_years) years"
         plot!(
         initial_plot,
         elevations_tried,
@@ -216,8 +220,13 @@ function plot_many(finance_list, initial_plot)
         ylabel="NPV [1000 USD]",
         label=label,
         marker=:circle,
+        #color=line_color
         )
-        vline!([min]; label="Optimal, no loan", linestyle=:dash)
+
+         #make the vertical line color the same as the horizontal line
+        line_color = initial_plot.series_list[end][:linecolor]
+        #line_color = plot_object.series_list[end].plotseries[:linecolor] 
+        vline!([min]; label="Optimal, $(finance.loan_rate)% loan", linestyle=:dash, color=line_color)
     end
 end
 
@@ -230,16 +239,19 @@ Generate many financial scenarios
 finance_list = []
 
 for i in range(1, 3)
-    fin = Finance(; loan=1, loan_years=5, loan_rate=50*i)
+    fin = Finance(; loan=1, loan_years=5, loan_rate=3*i)
     push!(finance_list, fin)
 end
 
-println(finance_list)
+#println(finance_list)
 ```
 
 
 ```{julia}
 
+#colors = [colorant"red", colorant"green", colorant"blue", colorant"orange", colorant"purple"]
+
+#line_color = colors[1]
 
 p = plot(
     elevations_tried,
@@ -247,9 +259,14 @@ p = plot(
     xlabel="Elevation [ft]",
     ylabel="NPV [1000 USD]",
     label="First $(N_SOW_opt) SOWs, no loan",
-    marker=:circle,
+    marker=:circle#, color=line_color
 )
-vline!([min]; label="Optimal, no loan", linestyle=:dash)
+#println(p.series_list[end][:linecolor] )
+
+#colors = Plots.palette()
+
+line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
+vline!([min]; label="Optimal, no loan", linestyle=:dash, color=line_color)
 
 plot_many(finance_list, p)
 display(p)
