@@ -470,8 +470,31 @@ Now we want to compare NPVS and annual costs for all of these scenarios
 
 Make a function to get NPV, annual cost, and optimal elevatin
 ```{julia}
+
+function annual_loan_cost(p, r, n)
+    #P is principle amount, r is rate, n is number of years
+    a = p * ( r * ((1+r)^n)  / ( (1+r)^n - 1 ) )
+    return a #a is annual payments
+end
+
+
 function annual_v_npv(finance)
     
+    elevations_tried, npvs, best_elevation = financial_npvs(finance)
+    #An engineer is not someone who makes things maximally efficient, but someone who makes things efficient enough.
+    best_npv, best_idx = findmax(npvs)
+
+    elevation_cost = elevation_cost(house, best_elevation)
+
+    if finance.loan == 0 #out of pocket
+        annual_cost = elevation_cost
+    elseif finance.loan == 1  #taking out a loan
+        annual_cost = annual_loan_cost(elevation_cost, finance.loan_rate, finance.loan_years)
+    else #saving up 
+        annual_cost = elevation_cost/finance.loan_years
+    end
+
+    return best_npv, annual_cost, best_elevation
 
 end
 
