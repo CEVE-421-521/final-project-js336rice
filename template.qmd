@@ -398,6 +398,8 @@ Plot our scenarios of different years to pay off the loan
 
 ```{julia}
 
+
+
 p = plot(
     elevations_tried,
     npvs ./ 1000;
@@ -462,6 +464,39 @@ vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
 plot_many(finance_list_rates, p)
 display(p)
 ```
+
+
+Now we want to compare NPVS and annual costs for all of these scenarios
+
+Make a function to get NPV, annual cost, and optimal elevatin
+```{julia}
+function annual_v_npv(finance)
+    
+
+end
+
+```
+
+
+```{julia}
+
+elevation_cost = elevation_cost(house, min)
+
+Annual_v_npv_plot = plot(
+    elevations_tried,
+    elevation_cost;
+    xlabel="Optimized NPV [1000 USD]",
+    ylabel="Annual Costs",
+    title="NPV vs Yearly Costs",
+    label="Our of Pocket",
+    marker=:circle#, color=line_color
+)
+
+```
+
+
+Now we want to compare NPVS and construction heights for all these different scenarios 
+
 
 
 
