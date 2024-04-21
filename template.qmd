@@ -160,6 +160,23 @@ sows_opt = first(sows, N_SOW_opt)
 
 Write our function we'll use to evaluate financial plans 
 
+
+```{julia}
+
+p = ModelParams(; house=house, years=2024:2083, finance=finance_basic)  #make our model 
+
+elevations_try = 0:0.5:14  #establish actions to try 
+actions_try = Action.(elevations_try)
+
+#Get all the contruction costs we can afford
+construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= 170_000]
+
+actions_try = actions_try[1:length(construction_costs)]  #get the list of actions we can afford
+
+
+```
+
+
 ```{julia}
 
 #assume physical house and SLR scenarios stay constant, only financial conditions change
@@ -168,6 +185,12 @@ function financial_npvs(finance)
 
     elevations_try = 0:0.5:14  #establish actions to try 
     actions_try = Action.(elevations_try)
+
+    #Get all the contruction costs we can afford
+    construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= p.finance.amnt_paid_off]
+
+    actions_try = actions_try[1:length(construction_costs)]  #get the list of actions we can afford
+    elevations_try = elevations_try[1:length(construction_costs)]  #limit elevations as well since we output this later
 
     #Run simulations 
     npvs_opt = [mean([run_sim(a, sow, p) for sow in sows_opt]) for a in actions_try]  
@@ -198,8 +221,8 @@ finance_basic = let
     loan = 0
     loan_years = 0
     loan_rate = 0.0
-    paid_off_percent = 5.0
-    amnt_paid_off = (paid_off_percent / 100) * house.value_usd  # Calculate amnt_paid_off
+    paid_off_percent = 1.0
+    amnt_paid_off = paid_off_percent * house.value_usd  # Calculate amnt_paid_off
 
     # Create Finance object using keyword arguments
     Finance(;
@@ -210,26 +233,6 @@ finance_basic = let
         amnt_paid_off = amnt_paid_off
     )
 end
-```
-
-```{julia}
-
-finance_basic = let  #Original finance, no loan, paying up-front 
-    loan = 0 
-    loan_years = 0
-    loan_rate = 0.0 #note that rate here is in whole percents
-    paid_off_percent=5.0  #This is also in whole percents
-    amnt_paid_off=(paid_off_percent/100)*house.value_usd
-    #print(amnt_paid_off)
-    Finance(; loan=loan, 
-    loan_years=loan_years, 
-    loan_rate=loan_rate, 
-    paid_off_percent=paid_off_percent,
-    amnt_paid_off=amnt_paid_off
-    )
-end
-
-
 ```
 
 
@@ -247,14 +250,12 @@ Define our function to plot many financial scenarios
 ```{julia}
 function plot_many(finance_list, initial_plot)
 
-
-
     
     for finance in finance_list
        
         #println(finance)
         elevations_tried, npvs, min = financial_npvs(finance)
-        label = "$(finance.loan_rate)% loan over $(finance.loan_years) years"
+        label = "$(round(finance.loan_rate*100))% loan over $(finance.loan_years) years"
         plot!(
         initial_plot,
         elevations_tried,
@@ -283,7 +284,10 @@ finance_list_rates = []
 
 for i in range(start=3, stop=9, length=4)
     #print(i)
-    fin = Finance(; loan=1, loan_years=5, loan_rate=Int64(i))
+    paid_off_percent = 0.7
+    fin = Finance(; loan=1, loan_years=5, loan_rate=i/100, paid_off_percent=paid_off_percent,
+        amnt_paid_off=(house.value_usd*paid_off_percent)
+        )
     push!(finance_list_rates, fin)
 end
 
