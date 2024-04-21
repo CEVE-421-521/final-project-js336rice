@@ -465,67 +465,6 @@ display(p)
 
 
 
-```{julia}
-bounds = boxconstraints(; lb=[0.0], ub=[14.0])
-```
-
-```{julia}
-function objective_function(Δh::Vector{Float64})
-    a = Action(Δh[1])
-    npvs = [run_sim(a, sow, p) for sow in sows_opt]
-    return -mean(npvs)
-end
-
-#function house_objective(Δh::Vector{Float64}, house) #objective function for that house
-
-```
-
-```{julia}
-result = optimize(objective_function, bounds)
-```
-
-We can view the minimum of the objective function with
-
-```{julia}
-display(minimum(result))
-display(minimizer(result))
-```
-
-
-This seems like it's working plausibly.
-Let's try now with more SOWs.
-
-```{julia}
-N_SOW_opt = 100
-sows_opt = first(sows, N_SOW_opt)
-```
-
-Since I'm using more SOWs here, I'll also increase the time limit for the optimization to three minutes.
-
-```{julia}
-options = Options(; time_limit=180.0, f_tol_rel=10.0)
-```
-
-To use options, we have to choose an algorithm.
-See list of algorithms [here](https://jmejia8.github.io/Metaheuristics.jl/stable/algorithms/).
-The `ECA` algorithm is suggested as a default, so we'll use that.
-
-```{julia}
-algorithm = ECA(; options=options)
-```
-
-Before we run the optimization, let's set a random seed.
-
-```{julia}
-Random.seed!(421521)
-result = optimize(objective_function, bounds, algorithm)
-```
-```{julia}
-display(minimum(result))
-display(minimizer(result))
-```
-
-
 
 
 You should make your modifications in either the `HouseElevation` or `ParkingGarage` module.
