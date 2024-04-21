@@ -58,7 +58,7 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         year_index = year - minimum(p.years)  #This is probably not an efficient way to do it since something similar is already calculated below 
 
         if year_index < fin.loan_years & (fin.loan > 1) #if we're still saving up
-            action_this_year = ustrip(u"ft", 0)  # then we're not elevating this year
+            action_this_year = 0#ustrip(u"ft", 0)  # then we're not elevating this year
             #annual_cost = annual_cost
             #println(fin.loan_rate)
             #println(annual_cost)
