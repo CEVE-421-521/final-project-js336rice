@@ -35,13 +35,13 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
     if fin.loan == 0  #if paying out of pocket
         upfront_cost = construction_cost
         annual_cost = 0
-    else   #if taking out a loan
-        # println("rate, years")
-        # println(fin.loan_rate)
-        # println(fin.loan_years)
-        # println(fin.loan)
-        annual_cost = annual_loan_cost(construction_cost, fin.loan_rate, fin.loan_years)
-        upfront_cost = 0  #Have to pay for the first year of the loan/down payment?
+    elseif fin.loan==1   #if taking out a loan
+        if construction_cost > Finance.amnt_paid_off #if construction cost is more than we can take out for a loan 
+            return 32  #we just can't explore this scenario
+            #return a positive number since our sims could never possibly return one.
+        else #if we can take out a loan
+            annual_cost = annual_loan_cost(construction_cost, fin.loan_rate, fin.loan_years)
+            upfront_cost = 0  #Have to pay for the first year of the loan/down payment?
     end
   
         
