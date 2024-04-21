@@ -4,11 +4,11 @@ using Interpolations
 using Unitful
 
 
-@kwdef struct Finance{T<:Real}
+@kwdef struct Finance  #{I<:Integer, T<:AbstractFloat}       #{T<:Real}
     #loan stuff
     loan::Int64  #Changed
     loan_years::Int64 #Changed 
-    loan_rate::Float64 #note that rate is in whole percents, so divide by 100 to get decimal
+    loan_rate::Float64 #note that rate is in decimals now
     paid_off_percent::Float64
     amnt_paid_off::Float64
 end

@@ -6,9 +6,9 @@ function trapz(x, y)
 end
 
 
-function annual_loan_cost(p, rate, n)
+function annual_loan_cost(p, r, n)
     #P is principle amount, r is rate, n is number of years
-    r = rate/100
+    #r = rate
     a = p * ( r * ((1+r)^n)  / ( (1+r)^n - 1 ) )
     #println(a, "place", "prin", p)
     return a #a is annual payments
