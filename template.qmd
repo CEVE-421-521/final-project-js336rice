@@ -276,6 +276,49 @@ end
 
 ```
 
+
+Generate many financial scenarios with different years to pay off the loan at a 7% interest rate
+
+```{julia}
+
+finance_list_years = []
+
+for i in [3, 5, 7, 10]
+    #print(i)
+    paid_off_percent = 0.7
+    fin = Finance(; loan=1, loan_years=i, loan_rate=0.07, paid_off_percent=paid_off_percent,
+        amnt_paid_off=(house.value_usd*paid_off_percent)
+        )
+    push!(finance_list_years, fin)
+end
+
+println(finance_list_years)
+```
+
+Plot our scenarios of different years to pay off the loan 
+
+```{julia}
+
+p = plot(
+    elevations_tried,
+    npvs ./ 1000;
+    xlabel="Elevation [ft]",
+    ylabel="NPV [1000 USD]",
+    title="Out of Pocket Vs Various payment periods",
+    label="First $(N_SOW_opt) SOWs, no loan",
+    marker=:circle#, color=line_color
+)
+
+
+line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
+vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
+
+plot_many(finance_list_years, p)
+display(p)
+
+```
+
+
 Generate many financial scenarios with different interest rates
 
 ```{julia}
