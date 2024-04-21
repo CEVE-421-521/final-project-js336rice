@@ -312,7 +312,7 @@ p = plot(
     xlabel="Elevation [ft]",
     ylabel="NPV [1000 USD]",
     title="Out of Pocket Vs Various saving periods",
-    label="First $(N_SOW_opt) SOWs, no loan",
+    label="Out of pocket",
     marker=:circle#, color=line_color
 )
 
@@ -334,6 +334,46 @@ Results of this graph show two interesting things:
 But since we are doing this simulation over a fixed period of time, the longer we wait to elevate, the less value is gained by elevating, since we'll have spent less of our time avoiding damages.  So assuming a non-infinite time duration for this experiment, the longer we wait to elevate, the lower the recommended elevation height gets.  
 
 We can demonstrate this more clearly by displaying some extremely long saving periods.
+
+
+
+```{julia}
+
+Long_Savings = []
+
+for i in [10, 20, 30, 50]
+    #print(i)
+    paid_off_percent = 1.0
+    fin = Finance(; loan=2, loan_years=i, loan_rate=0.0, paid_off_percent=paid_off_percent,
+        amnt_paid_off=(house.value_usd*paid_off_percent)
+        )
+    push!(Long_Savings, fin)
+end
+
+println(Long_Savings)
+```
+
+```{julia}
+
+p = plot(
+    elevations_tried,
+    npvs ./ 1000;
+    xlabel="Elevation [ft]",
+    ylabel="NPV [1000 USD]",
+    title="Out of Pocket Vs Various saving periods",
+    label="Out of pocket",
+    marker=:circle#, color=line_color
+)
+
+
+line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
+vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
+
+plot_many(Long_Savings, p)
+display(p)
+
+```
+
 
 
 Generate many financial scenarios with different years to pay off the loan at a 7% interest rate
