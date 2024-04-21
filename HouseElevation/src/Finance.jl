@@ -3,11 +3,14 @@ using DataFrames
 using Interpolations
 using Unitful
 
+
 @kwdef struct Finance{T<:Real}
     #loan stuff
-    loan::T  #Changed
-    loan_years::T #Changed 
-    loan_rate::T #note that rate is in whole percents, so divide by 100 to get decimal
+    loan::Int64  #Changed
+    loan_years::Int64 #Changed 
+    loan_rate::Float64 #note that rate is in whole percents, so divide by 100 to get decimal
+    paid_off_percent::Float64
+    amnt_paid_off::Float64
 end
 
 # function annual_loan_cost(p, r, n)
