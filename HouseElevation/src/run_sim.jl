@@ -37,7 +37,12 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         annual_cost = 0
     elseif fin.loan==1   #if taking out a loan
         annual_cost = annual_loan_cost(construction_cost, fin.loan_rate, fin.loan_years)
-        upfront_cost = 0  #Have to pay for the first year of the loan/down payment?
+        upfront_cost = annual_cost  #Have to pay for the first year of the loan
+    
+    else #if we decide to save up to elevate the house
+        #we'll use loan_years to represent how long we're saving up for
+        annual_cost = construction_cost/fin.loan_years 
+        upfront_cost = annual_cost  #assume we start saving money in the first year
 
     end
   
@@ -52,12 +57,14 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         #print(year)
         year_index = year - minimum(p.years)  #This is probably not an efficient way to do it since something similar is already calculated below 
 
-        if year_index <= fin.loan_years  #if we're still paying off the loan, set annual cost to payment amount
-            annual_cost = annual_cost
+        if year_index < fin.loan_years & (fin.loan > 1) #if we're still saving up
+            action_this_year = ustrip(u"ft", 0)  # then we're not elevating this year
+            #annual_cost = annual_cost
             #println(fin.loan_rate)
             #println(annual_cost)
         else
             annual_cost = 0 #if not, set it to 0
+            action_this_year = a.Δh_ft
         end
         # get the sea level for this year
         slr_ft = sow.slr(year)
@@ -65,7 +72,7 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         # Compute EAD using trapezoidal rule
         pdf_values = pdf.(sow.surge_dist, storm_surges_ft) # probability of each
         depth_ft_gauge = storm_surges_ft .+ slr_ft # flood at gauge
-        depth_ft_house = depth_ft_gauge .- (p.house.height_above_gauge_ft + a.Δh_ft) # flood @ house
+        depth_ft_house = depth_ft_gauge .- (p.house.height_above_gauge_ft + action_this_year) # flood @ house
         damages_frac = p.house.ddf.(depth_ft_house) ./ 100 # damage
         weighted_damages = damages_frac .* pdf_values # weighted damage
         # Trapezoidal integration of weighted damages
