@@ -36,7 +36,7 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         upfront_cost = construction_cost
         annual_cost = 0
     elseif fin.loan==1   #if taking out a loan
-        if construction_cost > Finance.amnt_paid_off #if construction cost is more than we can take out for a loan 
+        if construction_cost > fin.amnt_paid_off #if construction cost is more than we can take out for a loan 
             return 32  #we just can't explore this scenario
             #return a positive number since our sims could never possibly return one.
         else #if we can take out a loan
