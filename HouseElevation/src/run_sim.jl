@@ -41,6 +41,8 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
     
     else #if we decide to save up to elevate the house
         #we'll use loan_years to represent how long we're saving up for
+        #we need to make sure construction costs rise with inflation over time
+        construction_cost = construction_cost * ((1 + sow.discount_rate) ^ fin.loan_years)
         annual_cost = construction_cost/fin.loan_years 
         upfront_cost = annual_cost  #assume we start saving money in the first year
 
@@ -62,6 +64,9 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
             #annual_cost = annual_cost
             #println(fin.loan_rate)
             #println(annual_cost)
+        elseif year_index < fin.loan_years #if we're taking out a loan, still want to make sure our annual costs don't change
+            annual_cost = annual_cost
+            action_this_year = a.Δh_ft
         else
             annual_cost = 0 #if not, set it to 0
             action_this_year = a.Δh_ft

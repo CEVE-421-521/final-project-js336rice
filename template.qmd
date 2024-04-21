@@ -208,10 +208,9 @@ end
 
 Basic financing, just paying up fronts
 
-```{julia}
+
 println(methods(Finance))
 println(fieldtypes(Finance))
-```
 
 
 ```{julia}
@@ -255,7 +254,13 @@ function plot_many(finance_list, initial_plot)
        
         #println(finance)
         elevations_tried, npvs, min = financial_npvs(finance)
-        label = "$(round(finance.loan_rate*100))% loan over $(finance.loan_years) years"
+        if finance.loan == 1  #if taking out a loan
+            label = "$(round(finance.loan_rate*100))% loan over $(finance.loan_years) years"
+        elseif finance.loan > 1
+            label = "Saving over $(finance.loan_years) years"
+        else 
+            label = "Paying out of pocket"
+        end
         plot!(
         initial_plot,
         elevations_tried,
@@ -275,6 +280,60 @@ function plot_many(finance_list, initial_plot)
 end
 
 ```
+
+
+
+Generate many financial scenarios where we save up for different periods of time
+
+
+```{julia}
+
+finance_saving = []
+
+for i in [2, 3, 5, 7]
+    #print(i)
+    paid_off_percent = 1.0
+    fin = Finance(; loan=2, loan_years=i, loan_rate=0.0, paid_off_percent=paid_off_percent,
+        amnt_paid_off=(house.value_usd*paid_off_percent)
+        )
+    push!(finance_saving, fin)
+end
+
+println(finance_saving)
+```
+
+Plot our saving options
+
+```{julia}
+
+p = plot(
+    elevations_tried,
+    npvs ./ 1000;
+    xlabel="Elevation [ft]",
+    ylabel="NPV [1000 USD]",
+    title="Out of Pocket Vs Various saving periods",
+    label="First $(N_SOW_opt) SOWs, no loan",
+    marker=:circle#, color=line_color
+)
+
+
+line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
+vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
+
+plot_many(finance_saving, p)
+display(p)
+
+```
+
+Results of this graph show two interesting things:
+
+1. NPV of saving is always a lot lower than paying up front.  This makes sense, since we're increasing construction cost with inflation, so the only change to the NPV will be more damages while we wait to elevate the house.
+
+2. NPV results recommend lower elevations if we chose to wait.  This seems strange at first, since most people might save money so they can elevate higher, and you'd think that if we do wait to elevate, it'd make more sense to do a higher elevation to compensate for the damages we experienced in the first few years.  
+
+But since we are doing this simulation over a fixed period of time, the longer we wait to elevate, the less value is gained by elevating, since we'll have spent less of our time avoiding damages.  So assuming a non-infinite time duration for this experiment, the longer we wait to elevate, the lower the recommended elevation height gets.  
+
+We can demonstrate this more clearly by displaying some extremely long saving periods.
 
 
 Generate many financial scenarios with different years to pay off the loan at a 7% interest rate
