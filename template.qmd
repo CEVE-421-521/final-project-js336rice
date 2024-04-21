@@ -183,7 +183,7 @@ end
 
 ```
 
-Basic financing, just paying up front
+Basic financing, just paying up fronts
 
 ```{julia}
 println(methods(Finance))
