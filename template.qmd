@@ -637,7 +637,7 @@ display(height_v_npv_plot)
 
 ## testing
 
-```{julia}
+#```{julia}
 test_plot = plot(
     [optimal_npv] ./ 1000,
     [annual_cost] ./ 1000 ;
@@ -651,20 +651,9 @@ general_plot(1, 2, finance_list_rates, test_plot, "Loan, different interest rate
 general_plot(1, 2, finance_list_years, test_plot, "Loan, different years")
 general_plot(1, 2, finance_saving, test_plot, "Saving for 2-7 years")
 #display(Annual_v_npv_plot)
-```
+#```
 
-```{julia}
-Annual_v_npv_plot = plot(
-    [optimal_npv] ./ 1000,
-    [best_elevation] ;
-    xlabel="Optimized NPV [1000 USD]",
-    ylabel="Ideal Elevation",
-    title="Elevation vs Optimized NPV",
-    label="Out of Pocket",
-    marker=:circle#, color=line_color
-)
 
-```
 
 Now we want to compare NPVS and construction heights for all these different scenarios 
 
