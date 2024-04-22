@@ -528,7 +528,6 @@ function plot_money_values(finance, initial_plot, label)
         xlabel="Optimized NPV [1000 USD]",
         ylabel="Annual Costs [1000 USD]",
         label=label,
-        marker_z = best_elevations,
         marker=:circle,
         #color=line_color
         )
@@ -549,7 +548,7 @@ Annual_v_npv_plot = plot(
     xlabel="Optimized NPV [1000 USD]",
     ylabel="Annual Costs [1000 USD]",
     title="NPV vs Yearly Costs",
-    label="Our of Pocket",
+    label="Out of Pocket",
     marker=:circle#, color=line_color
 )
 plot_money_values(finance_list_rates, Annual_v_npv_plot, "Loan, different interest rates")
