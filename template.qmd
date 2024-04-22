@@ -566,6 +566,7 @@ plot_money_values(Long_Savings, Annual_v_npv_plot, "Saving for 10-50 years")
 
 ```
 
+## Next: add indicators to annual_v_npv plot that shows what thing is what
 
 Now we want to compare NPVS and construction heights for all these different scenarios 
 
