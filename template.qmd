@@ -571,18 +571,42 @@ display(Annual_v_npv_plot)
 ## compare NPVS and construction heights for all these different scenarios 
 
 ```{julia}
-function general_plot(x, y, initial_plot, label)
+function general_plot(x, y, finance, initial_plot, label)
+
+    # 1 = best_npvs, 2 = annual_costs, 3 = best_elevation
+    values = collect(get_costs(finance)) #get our values to plot.  
+    #Using collect makes sure these values are in an array so we can use ./1000 later
+    #println(values)
+    #println(values[2])
+    values[1] = values[1] ./ 1000  #adjust npv and annual costs 
+    values[2] = values[2] ./1000
+    
 
     plot!(
         initial_plot,
-        x,
-        y;
+        values[x],  #decide what to plot 
+        values[y];
         label=label,
         marker=:circle,
         #color=line_color
         )
-
 end
+```
+
+```{julia}
+test_plot = plot(
+    [optimal_npv] ./ 1000,
+    [annual_cost] ./ 1000 ;
+    xlabel="Optimized NPV [1000 USD]",
+    ylabel="Annual Costs [1000 USD]",
+    title="NPV vs Yearly Costs",
+    label="Out of Pocket",
+    marker=:circle#, color=line_color
+)
+general_plot(1, 2, finance_list_rates, test_plot, "Loan, different interest rates")
+general_plot(1, 2, finance_list_years, test_plot, "Loan, different years")
+general_plot(1, 2, finance_saving, test_plot, "Saving for 2-7 years")
+#display(Annual_v_npv_plot)
 ```
 
 ```{julia}
