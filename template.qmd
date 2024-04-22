@@ -570,6 +570,7 @@ display(Annual_v_npv_plot)
 
 ## compare NPVS and construction heights for all these different scenarios 
 
+
 ```{julia}
 function general_plot(x, y, finance, initial_plot, label)
 
@@ -592,6 +593,49 @@ function general_plot(x, y, finance, initial_plot, label)
         )
 end
 ```
+
+
+```{julia}
+height_v_npv_plot = plot(
+    [optimal_npv] ./ 1000,
+    [best_elevation] ;
+    xlabel="Optimized NPV [1000 USD]",
+    ylabel="Elevation [ft]",
+    title="NPV vs Elevation",
+    label="Out of Pocket",
+    marker=:circle,#, color=line_color
+    legend=:bottomright
+)
+
+general_plot(1, 3, finance_list_rates, height_v_npv_plot, "Loan, different interest rates")
+general_plot(1, 3, finance_list_years, height_v_npv_plot, "Loan, different years")
+general_plot(1, 3, finance_saving, height_v_npv_plot, "Saving for 2-7 years")
+display(height_v_npv_plot)
+```
+
+
+## compare annual costs and construction heights
+
+```{julia}
+height_v_npv_plot = plot(
+    [annual_cost] ./ 1000,
+    [best_elevation] ;
+    xlabel="Annual Cost [1000 USD]",
+    ylabel="Elevation [ft]",
+    title="Annual Cost vs Elevation",
+    label="Out of Pocket",
+    marker=:circle,#, color=line_color
+    legend=:bottomright
+)
+
+general_plot(2, 3, finance_list_rates, height_v_npv_plot, "Loan, different interest rates")
+general_plot(2, 3, finance_list_years, height_v_npv_plot, "Loan, different years")
+general_plot(2, 3, finance_saving, height_v_npv_plot, "Saving for 2-7 years")
+display(height_v_npv_plot)
+```
+
+
+## testing
 
 ```{julia}
 test_plot = plot(
