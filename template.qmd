@@ -176,6 +176,7 @@ actions_try = actions_try[1:length(construction_costs)]  #get the list of action
 
 ```
 
+## Financial_NPVS function
 
 ```{julia}
 
@@ -211,7 +212,7 @@ Basic financing, just paying up fronts
 
 println(methods(Finance))
 println(fieldtypes(Finance))
-
+## Finance_Basic
 
 ```{julia}
 
@@ -243,7 +244,7 @@ elevations_tried, npvs, min = financial_npvs(finance_basic)
 
 ```
 
-
+## plot_many
 Define our function to plot many financial scenarios 
 
 ```{julia}
@@ -281,7 +282,7 @@ end
 
 ```
 
-
+## reasonable saving time
 
 Generate many financial scenarios where we save up for different periods of time
 
@@ -336,6 +337,7 @@ But since we are doing this simulation over a fixed period of time, the longer w
 We can demonstrate this more clearly by displaying some extremely long saving periods.
 
 
+## Long saving time
 
 ```{julia}
 
@@ -374,7 +376,7 @@ display(p)
 
 ```
 
-
+## Different loan durations
 
 Generate many financial scenarios with different years to pay off the loan at a 7% interest rate
 
@@ -419,7 +421,7 @@ display(p)
 
 ```
 
-
+## Different interest rates
 Generate many financial scenarios with different interest rates
 
 ```{julia}
@@ -465,6 +467,7 @@ plot_many(finance_list_rates, p)
 display(p)
 ```
 
+## Compare NPVS and annual costs
 
 Now we want to compare NPVS and annual costs for all of these scenarios
 
@@ -520,11 +523,12 @@ function plot_money_values(finance, initial_plot, label)
     best_npvs, annual_costs, best_elevations = get_costs(finance)
     plot!(
         initial_plot,
-        best_npvs,
-        annual_costs;
+        best_npvs ./ 1000,
+        annual_costs ./ 1000;
         xlabel="Optimized NPV [1000 USD]",
-        ylabel="Annual Costs",
+        ylabel="Annual Costs [1000 USD]",
         label=label,
+        marker_z = best_elevations,
         marker=:circle,
         #color=line_color
         )
@@ -540,15 +544,26 @@ get_costs(finance_list_rates)
 optimal_npv, annual_cost, best_elevation = annual_v_npv(finance_basic)
 
 Annual_v_npv_plot = plot(
-    [optimal_npv],
-    [annual_cost]  ;
+    [optimal_npv] ./ 1000,
+    [annual_cost] ./ 1000 ;
     xlabel="Optimized NPV [1000 USD]",
-    ylabel="Annual Costs",
+    ylabel="Annual Costs [1000 USD]",
     title="NPV vs Yearly Costs",
     label="Our of Pocket",
     marker=:circle#, color=line_color
 )
-plot_money_values(finance_list_rates)
+plot_money_values(finance_list_rates, Annual_v_npv_plot, "Loan, different interest rates")
+plot_money_values(finance_list_years, Annual_v_npv_plot, "Loan, different years")
+plot_money_values(finance_saving, Annual_v_npv_plot, "Saving for 2-7 years")
+display(Annual_v_npv_plot)
+
+```
+
+The chart changes radically when we display long savings times
+```{julia}
+
+plot_money_values(Long_Savings, Annual_v_npv_plot, "Saving for 10-50 years")
+
 
 ```
 
@@ -569,22 +584,6 @@ Include code snippets and explanations where necessary to clarify the implementa
 In this case, we don't really _need_ optimization -- we can use brute force.
 We can compare by plotting the objective function for a range of elevations (from 0 to 14 ft) using all SOWs.
 
-
-
-and plot
-
-```{julia}
-plot(
-    elevations_try,
-    npvs_opt ./ 1000;
-    xlabel="Elevation [ft]",
-    ylabel="NPV [1000 USD]",
-    label="First $(N_SOW_opt) SOWs",
-    marker=:circle,
-)
-plot!(elevations_try, npvs_moore ./ 1000; title="Out of Pocket Payment", label="First $(N_more) SOWs", marker=:circle)
-vline!([minimizer(result)]; label="Optimal", linestyle=:dash)
-```
 
 
 As we have seen in labs, mistakes are inevitable and can lead to misleading results.
