@@ -484,14 +484,15 @@ function annual_v_npv(finance)
     #An engineer is not someone who makes things maximally efficient, but someone who makes things efficient enough.
     best_npv, best_idx = findmax(npvs)
 
-    elevation_cost = elevation_cost(house, best_elevation)
+    construction_cost = elevation_cost(house, best_elevation)
+    #println(elevation_cost(house, best_elevation))
 
     if finance.loan == 0 #out of pocket
-        annual_cost = elevation_cost
+        annual_cost = construction_cost
     elseif finance.loan == 1  #taking out a loan
-        annual_cost = annual_loan_cost(elevation_cost, finance.loan_rate, finance.loan_years)
+        annual_cost = annual_loan_cost(construction_cost, finance.loan_rate, finance.loan_years)
     else #saving up 
-        annual_cost = elevation_cost/finance.loan_years
+        annual_cost = construction_cost/finance.loan_years
     end
 
     return best_npv, annual_cost, best_elevation
@@ -503,17 +504,51 @@ end
 
 ```{julia}
 
-elevation_cost = elevation_cost(house, min)
+
+function get_costs(finances)
+    figures = annual_v_npv.(finances)
+    best_npvs = [fig[1] for fig in figures]
+    annual_costs = [fig[2] for fig in figures]
+    best_elevations = [fig[3] for fig in figures]
+
+    return best_npvs, annual_costs, best_elevations
+end
+
+
+function plot_money_values(finance, initial_plot, label)
+
+    best_npvs, annual_costs, best_elevations = get_costs(finance)
+    plot!(
+        initial_plot,
+        best_npvs,
+        annual_costs;
+        xlabel="Optimized NPV [1000 USD]",
+        ylabel="Annual Costs",
+        label=label,
+        marker=:circle,
+        #color=line_color
+        )
+
+end
+
+
+```
+get_costs(finance_list_rates)
+
+```{julia}
+
+optimal_npv, annual_cost, best_elevation = annual_v_npv(finance_basic)
 
 Annual_v_npv_plot = plot(
-    elevations_tried,
-    elevation_cost;
+    [optimal_npv],
+    [annual_cost]  ;
     xlabel="Optimized NPV [1000 USD]",
     ylabel="Annual Costs",
     title="NPV vs Yearly Costs",
     label="Our of Pocket",
     marker=:circle#, color=line_color
 )
+plot_money_values(finance_list_rates)
 
 ```
 
