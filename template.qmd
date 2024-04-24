@@ -67,7 +67,7 @@ Provide a brief overview of the theoretical background related to your chosen fe
 Cite at least two relevant journal articles to support your approach (see [Quarto docs](https://quarto.org/docs/authoring/footnotes-and-citations.html) for help with citations).
 Explain how these articles contribute to the justification of your selected feature.
 
-\cite{Finance_and_climate} discusses how policy makers ought to take a precautionary approach to addressing the financial impacts of climate change, and that policy "should help justify immediate preventative action".  They argue for using scenario analysis and stress testing to evaluate potential policies.  To this end, this feature could give policy makers a clearer picture about what they ought to do: give homeowners money to elevate their homes or force them to pay for home elevation, set up loan programs for home elevation, and forcing homeowners to save up for home elevation.  This feature can be used to compare these three strategies.
+\cite{Finance_and_climate:2021} discusses how policy makers ought to take a precautionary approach to addressing the financial impacts of climate change, and that policy "should help justify immediate preventative action".  They argue for using scenario analysis and stress testing to evaluate potential policies.  To this end, this feature could give policy makers a clearer picture about what they ought to do: give homeowners money to elevate their homes or force them to pay for home elevation, set up loan programs for home elevation, and forcing homeowners to save up for home elevation.  This feature can be used to compare these three strategies.
 
 
 
@@ -718,9 +718,9 @@ Discuss the broader implications of your work for climate risk management and th
 
 example citation:
 
+\cite{amonkar_heatingcooling:2023}
+
+\cite{Finance_and_climate:2021}
+
 
 ```{bibliography}
-
-
-```
-
