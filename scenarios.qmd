@@ -133,6 +133,7 @@ end
 
 ## finance - Out of Pocket
 
+
 ```{julia}
 #OOP is out of pocket finance
 

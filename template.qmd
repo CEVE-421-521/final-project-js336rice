@@ -807,24 +807,26 @@ Use the `#| output: false` and/or `#| echo: false` tags to hide code output and 
 You may have multiple subsections of results, which you can create using `##`.
 
 
-We'll present our results by looking at four scenarios: One where the homeowner has high equity and high savings, one where they have low equity and low savings, and 
+We'll present our results by looking at four scenarios: One where the homeowner has high equity and high savings, one where they have low equity and high savings, high equity and low savings, and low equity and high savings.
 
 ```{julia}
 println("The cost to elevate our home 9.5 feet is ", elevation_cost(house, 9.5))
 ```
-Note that the cost to elevate our house 9.5 feet, what was previously considered optimal, costs more than 157,000 US dollars, putting it even out of reach for out of pocket payment by our high-savings individuals. 
+Note that the cost to elevate our house 9.5 feet, what was previously considered optimal, is more than 157,000 US dollars, putting it even out of reach for out of pocket payment by our high-savings individuals. 
 
-Only the wealthiest 10% of americsn have more than 111,000 USD in their bank accounts, so our high-savings individuals with more than 120k are doing fairly well, but still can't afford the "optimal" elevation. \cite{wealth_2023}
+Only the wealthiest 10% of americsn have more than 111,000 USD in their bank accounts, so our high-savings individuals with more than 120,000 are doing fairly well, but still can't afford the "optimal" elevation. \cite{wealth_2023}
 
 Also, it's worth pointing out that our "low savings" individual has 10k in their bank account, but this is still more than 60% of americans \cite{wealth_2023}
+
+Our high-equity individuals will have 70% equity in their home, and low-equity will have 30%
 
 ```{julia}
 #| output: false
 #high equity, high savings
-high_equity = 0.8
+high_equity = 0.7
 high_savings = 120_000
 
-low_equity = 0.2
+low_equity = 0.3
 low_savings = 10_000
 #10k is actally still more than 60% of americans according to the motley fool, which is... sad.
 
@@ -856,7 +858,7 @@ LELS = gen_finances(low_equity, low_savings, house)
 plot_LHSE_scenario(LELS, "Low Equity ($(low_equity*100)%), Low Savings ($(low_savings/1000)K)")
 ```
 
-It's notable that you need about 150k in your savings to have all elevation options open to you
+It's notable that you need about 150k in your savings to have all elevation options open to you.  We can see this if we make a chart for someone with very high savings. 
 
 ```{julia}
 #| output: false
@@ -864,7 +866,7 @@ HEUHS = gen_finances(high_equity, ultra_high_savings, house)
 plot_LHSE_scenario(HEUHS, "High Equity ($(high_equity*100)%), Ultra High Savings ($(ultra_high_savings/1000)K)")
 ```
 
-
+Inspite of the high potential for NPV when paying out of pocket, in all of the other scenarios we looked at, the NPV of paying out of pocket was lower than that of saving up or taking out a loan.  This is due to the high cost of construction making paying for an optimal elevation without some type of finanical plan out of reach even for wealthy individuals.  This is the only one where NPV of paying out of pocket is higher than loans or saving because it's the only one where this strategy was able to be used to its full potential.
 
 # Conclusions
 
