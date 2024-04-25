@@ -53,13 +53,15 @@ Each of these options has tradeoffs in total cost, yearly cost, the cost of dama
 Describe the feature you have selected to add to the existing decision-support tool.
 Discuss how this feature relates to the problem statement and its potential to improve climate risk assessment.
 
-The new feature I've chosen to implement is a struct called "Finance".  This struct describes the financial conditions of the home, and the plan to elevate it.  It includes a loan variable, that describes if the owners will take out a loan to finance the elevation, save up to finance it, or if they will pay out of pocket.  It also contains a loan_rate variable for the interest on potential loans, loan_years, which describes how long homeowners will either save up for or pay out a loan for, paid_off_percent, the amount of the house that's paid off as a decimal, and paid_off_amnt, or the total value of the home that's paid off in US dollars. 
+The new feature I've chosen to implement is a struct called "Finance".  This struct describes the financial conditions of the home, and the plan to elevate it.  It includes a loan variable, that describes if the owners will take out a loan to finance the elevation, save up for it, or if they will pay out of pocket.  It also contains a loan_rate variable for the interest on potential loans, loan_years, which describes how long homeowners will either save up for or pay out a loan for, paid_off_percent, the amount of the house that's paid off as a decimal, and paid_off_amnt (the total value of the home that's paid off in US dollars), and savings, the amount of money in the homeowners's savings account. 
 
 In addition to this new struct, run_sim has been modified to take it into account.  So if we chose to save up, our action of elevating the home is delayed until enough money has been saved to do so, and the cost of construction will be increased with the discount rate of that scenario. 
 
-If we choose to take out a loan, we will elevate the home immediately, but then pay off the loan annualy according to the pre-determined interest rate, and the discount rate will again be accounted for in the value of these payments.
+If we choose to take out a loan, we will elevate the home immediately, but then pay off the loan annualy according to the pre-determined interest rate, and the discount rate will again be accounted for in the value of these payments.  
 
-If we pay out of pocket, then nothing changes, and run_sim operates as it did before.  
+If we pay out of pocket, then nothing changes, and run_sim operates as it did before, but we can't elevate above what we can afford in our savings account.
+
+If we save up, then we make annual payments until we've saved up enough money to elevate.  Whatever's already in the savings account acts as a base we can save on top of.
 
 # Literature Review
 
@@ -237,7 +239,7 @@ finance_basic = let
     loan_rate = 0.0
     paid_off_percent = 1.0
     amnt_paid_off = paid_off_percent * house.value_usd  # Calculate amnt_paid_off
-    savings = 180_000
+    savings = 250_000
 
     # Create Finance object using keyword arguments
     Finance(;
@@ -594,7 +596,6 @@ display(Annual_v_npv_plot)
 
 ```{julia}
 function general_plot(x, y, finance, initial_plot, label)
-
     # 1 = best_npvs, 2 = annual_costs, 3 = best_elevation
     values = collect(get_costs(finance)) #get our values to plot.  
     #Using collect makes sure these values are in an array so we can use ./1000 later
@@ -603,7 +604,6 @@ function general_plot(x, y, finance, initial_plot, label)
     values[1] = values[1] ./ 1000  #adjust npv and annual costs 
     values[2] = values[2] ./1000
     
-
     plot!(
         initial_plot,
         values[x],  #decide what to plot 
@@ -653,6 +653,100 @@ general_plot(2, 3, finance_list_rates, height_v_npv_plot, "Loan, different inter
 general_plot(2, 3, finance_list_years, height_v_npv_plot, "Loan, different years")
 general_plot(2, 3, finance_saving, height_v_npv_plot, "Saving for 2-7 years")
 display(height_v_npv_plot)
+```
+
+## Low and high savings and equity (LHSE) homes
+
+Now that we're all set up, lets look at scenarios where we have high and low savings and high and low equity (LHSE).
+
+We'll assume that market loans are run at 7% interest and not consider other interest rates, except for govenrment loans for people with low equity and low savings at 7.5%.  
+
+Make a function that generates the finance outcomes for these different plans given a set equity and savings:
+
+```{julia}
+function gen_finances(equity, savings, house)
+
+    loan_finances = [] #7.0% bank loan
+    gov_loan = []  #7.5% government loan for those in need
+    saving_finances = []
+
+    for i in [2, 3, 5, 7]  #saving scenarios 
+        fin = Finance(; loan=2, loan_years=i, loan_rate=0.0, paid_off_percent=equity,
+            amnt_paid_off=(house.value_usd*equity), savings=savings
+            )
+        push!(saving_finances, fin)
+    end
+
+    for i in [3, 5, 7, 10]  #bank loan scenarios 
+        fin = Finance(; loan=1, loan_years=i, loan_rate=0.07, paid_off_percent=equity,
+        amnt_paid_off=(house.value_usd*equity), savings=savings
+        )
+        push!(loan_finances, fin)
+    end
+
+    for i in [3, 5, 7, 10]  #government loan scenarios 
+        fin = Finance(; loan=1, loan_years=i, loan_rate=0.075, paid_off_percent=1.0,  #gov loan assumes equity doesn't matter
+        amnt_paid_off=(house.value_usd*1.0), savings=savings
+        )
+        push!(gov_loan, fin)
+    end
+
+    # Our of pocket elevation
+    OOP = Finance(;
+        loan = 0,
+        loan_years = 0,
+        loan_rate = 0.0,
+        paid_off_percent = equity,
+        amnt_paid_off = (house.value_usd*equity),
+        savings = savings
+    )
+
+    return OOP, saving_finances, loan_finances, gov_loan
+
+end
+
+```
+
+Now make a function that plots the outcomes for all of these scenarios:
+
+```{julia}
+
+function plot_LHSE_scenario(LHSE_options, title)
+
+    OOP, saving_finances, loan_finances, gov_loan = LHSE_options
+
+    optimal_npv, annual_cost, best_elevation = annual_v_npv(OOP)
+
+    Annual_v_npv_plot = plot(
+        [optimal_npv] ./ 1000,
+        [annual_cost] ./ 1000 ;
+        xlabel="Optimized NPV [1000 USD]",
+        ylabel="Annual Costs [1000 USD]",
+        title=title,
+        label="Out of Pocket",
+        marker=:circle#, color=line_color
+    )
+    plot_money_values(gov_loan, Annual_v_npv_plot, "Government Loan")
+    plot_money_values(loan_finances, Annual_v_npv_plot, "Bank Loan")
+    plot_money_values(saving_finances, Annual_v_npv_plot, "Saving for 2-7 years")
+    display(Annual_v_npv_plot)
+
+end
+
+```
+
+
+```{julia}
+elevation_cost(house, 9.5)
+```
+Note that the cost to elevate our house 9.5 feet, what was previously considered optimal, costs more than 157,000 US dollars, putting it even out of reach for out of pocket payment by our high-savings individuals. 
+
+Only the wealthiest 10% of americsn have more than 111,000 USD in their bank accounts, so our high-savings individuals with more than 120k are doing fairly well, but still can't afford the "optimal" elevation.
+
+```{julia}
+LHSE_options = gen_finances(0.8, 120_000, house)
+plot_LHSE_scenario(LHSE_options, "High Savings (120k), High Equity(80%)")
+
 ```
 
 

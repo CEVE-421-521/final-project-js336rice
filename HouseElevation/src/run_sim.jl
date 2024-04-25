@@ -36,8 +36,9 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         upfront_cost = construction_cost
         annual_cost = 0
     elseif fin.loan==1   #if taking out a loan
+        #construction_cost -= fin.savings
         annual_cost = annual_loan_cost(construction_cost, fin.loan_rate, fin.loan_years)
-        upfront_cost = annual_cost  #Have to pay for the first year of the loan
+        upfront_cost = annual_cost# + fin.savings #Have to pay for the first year of the loan
     
     else #if we decide to save up to elevate the house
         #we'll use loan_years to represent how long we're saving up for
@@ -45,11 +46,17 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         #we need to make sure construction costs rise with inflation over time
         construction_cost = construction_cost * ((1 + sow.discount_rate) ^ fin.loan_years)
 
-        construction_cost -= fin.savings #if we have pre-existing savings those can come into play
-        
-        annual_cost = construction_cost/fin.loan_years 
-        upfront_cost = annual_cost + fin.savings  #assume we start saving money in the first year + add back in what we paid in savings
+        if fin.savings >= construction_cost #if we already have enough to pay this future construction cost
+            #we already have enough to pay in one year, so this just becomes an exercise in wating to elevate
+            annual_cost = 0
+            upfront_cost = construction_cost 
+            
+        else #if we actually do need to save up to afford elevation
+            construction_cost -= fin.savings #if we have pre-existing savings those can come into play
 
+            annual_cost = construction_cost/fin.loan_years 
+            upfront_cost = annual_cost + fin.savings  #assume we start saving money in the first year + add back in what we paid in savings
+        end
     end
   
         
