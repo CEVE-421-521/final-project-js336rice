@@ -821,7 +821,7 @@ Also, it's worth pointing out that our "low savings" individual has 10k in their
 Our high-equity individuals will have 70% equity in their home, and low-equity will have 30%
 
 ```{julia}
-#| output: false
+
 #high equity, high savings
 high_equity = 0.7
 high_savings = 120_000
@@ -835,25 +835,25 @@ ultra_high_savings = 150_000
 ```
 
 ```{julia}
-#| output: false
+
 HEHS = gen_finances(high_equity, high_savings, house)
 plot_LHSE_scenario(HEHS, "High Equity ($(high_equity*100)%), High Savings ($(high_savings/1000)K)")
 ```
 
 ```{julia}
-#| output: false
+
 HELS = gen_finances(high_equity, low_savings, house)
 plot_LHSE_scenario(HELS, "High Equity ($(high_equity*100)%), Low Savings ($(low_savings/1000)K)")
 ```
 
 ```{julia}
-#| output: false
+
 LEHS = gen_finances(low_equity, high_savings, house)
 plot_LHSE_scenario(LEHS, "Low Equity ($(low_equity*100)%), High Savings ($(high_savings/1000)K)")
 ```
 
 ```{julia}
-#| output: false
+
 LELS = gen_finances(low_equity, low_savings, house)
 plot_LHSE_scenario(LELS, "Low Equity ($(low_equity*100)%), Low Savings ($(low_savings/1000)K)")
 ```
