@@ -102,8 +102,17 @@ function financial_npvs(finance)
     elevations_try = 0:0.5:14  #establish actions to try 
     actions_try = Action.(elevations_try)
 
-    #Get all the contruction costs we can afford
-    construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= p.finance.amnt_paid_off]
+    
+    if p.finance.loan == 1 #if taking out a loan
+        #Get all the contruction costs we can afford through equity
+        construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= p.finance.amnt_paid_off]
+    elseif p.finance.loan == 0 #if paying out of pocket
+        #must have enough in savings to pay
+        construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= p.finance.savings]
+    else # if we're saving up, we can try all possible outcomes
+        construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try]
+    end
+
 
     actions_try = actions_try[1:length(construction_costs)]  #get the list of actions we can afford
     elevations_try = elevations_try[1:length(construction_costs)]  #limit elevations as well since we output this later
@@ -129,11 +138,11 @@ end
 
 finance_OOP = let
     loan = 0
-    loan_years = 0
+    loan_years = 3
     loan_rate = 0.0
     paid_off_percent = 1.0
     amnt_paid_off = paid_off_percent * house.value_usd  # Calculate amnt_paid_off
-    savings = 100_000
+    savings = 150_000
 
     # Create upgraded Finance object using keyword arguments
     Finance(;
@@ -148,4 +157,82 @@ end
 ```
 
 
+```{julia}
+
+elevations_tried, npvs, min = financial_npvs(finance_OOP)
+
+```
+
+```{julia}
+function plot_many(finance_list, initial_plot)
+
+    
+    for finance in finance_list
+       
+        #println(finance)
+        elevations_tried, npvs, min = financial_npvs(finance)
+        if finance.loan == 1  #if taking out a loan
+            label = "$(round(finance.loan_rate*100))% loan over $(finance.loan_years) years"
+        elseif finance.loan > 1
+            label = "Saving over $(finance.loan_years) years"
+        else 
+            label = "Paying out of pocket"
+        end
+        plot!(
+        initial_plot,
+        elevations_tried,
+        npvs ./ 1000;
+        xlabel="Elevation [ft]",
+        ylabel="NPV [1000 USD]",
+        label=label,
+        marker=:circle,
+        #color=line_color
+        )
+
+         #make the vertical line color the same as the horizontal line
+        line_color = initial_plot.series_list[end][:linecolor]
+        #line_color = plot_object.series_list[end].plotseries[:linecolor] 
+        vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
+    end
+end
+
+```
+
+
+```{julia}
+
+finance_saving = []
+
+for i in [2, 3, 5, 7]
+    #print(i)
+    paid_off_percent = 1.0
+    fin = Finance(; loan=2, loan_years=i, loan_rate=0.0, paid_off_percent=paid_off_percent,
+        amnt_paid_off=(house.value_usd*paid_off_percent), savings=100_000
+        )
+    push!(finance_saving, fin)
+end
+
+println(finance_saving)
+```
+
+```{julia}
+
+p = plot(
+    elevations_tried,
+    npvs ./ 1000;
+    xlabel="Elevation [ft]",
+    ylabel="NPV [1000 USD]",
+    title="Out of Pocket Vs Various saving periods",
+    label="Out of pocket",
+    marker=:circle#, color=line_color
+)
+
+
+line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
+vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
+
+plot_many(finance_saving, p)
+display(p)
+
+```
 

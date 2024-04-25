@@ -45,7 +45,7 @@ function run_sim(a::Action, sow::SOW, p::ModelParams)
         #we need to make sure construction costs rise with inflation over time
         construction_cost = construction_cost * ((1 + sow.discount_rate) ^ fin.loan_years)
         annual_cost = construction_cost/fin.loan_years 
-        upfront_cost = annual_cost  #assume we start saving money in the first year
+        upfront_cost = annual_cost + fin.savings  #assume we start saving money in the first year + add back in what we paid in savings
 
     end
   
