@@ -786,31 +786,6 @@ plot_LHSE_scenario(HEUHS, "High Equity ($(high_equity*100)%), Ultra High Savings
 ```
 
 
-## testing
-
-#```{julia}
-test_plot = plot(
-    [optimal_npv] ./ 1000,
-    [annual_cost] ./ 1000 ;
-    xlabel="Optimized NPV [1000 USD]",
-    ylabel="Annual Costs [1000 USD]",
-    title="NPV vs Yearly Costs",
-    label="Out of Pocket",
-    marker=:circle#, color=line_color
-)
-general_plot(1, 2, finance_list_rates, test_plot, "Loan, different interest rates")
-general_plot(1, 2, finance_list_years, test_plot, "Loan, different years")
-general_plot(1, 2, finance_saving, test_plot, "Saving for 2-7 years")
-#display(Annual_v_npv_plot)
-#```
-
-
-
-Now we want to compare NPVS and construction heights for all these different scenarios 
-
-
-## Next: add indicators to annual_v_npv plot that shows what thing is what
-
 
 
 You should make your modifications in either the `HouseElevation` or `ParkingGarage` module.
