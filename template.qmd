@@ -406,8 +406,9 @@ finance_list_years = []
 for i in [3, 5, 7, 10]
     #print(i)
     paid_off_percent = 0.7
+    savings=180_000
     fin = Finance(; loan=1, loan_years=i, loan_rate=0.07, paid_off_percent=paid_off_percent,
-        amnt_paid_off=(house.value_usd*paid_off_percent)
+        amnt_paid_off=(house.value_usd*paid_off_percent), savings=savings
         )
     push!(finance_list_years, fin)
 end
@@ -450,8 +451,9 @@ finance_list_rates = []
 for i in range(start=3, stop=9, length=4)
     #print(i)
     paid_off_percent = 0.7
+    savings = 180_000
     fin = Finance(; loan=1, loan_years=5, loan_rate=i/100, paid_off_percent=paid_off_percent,
-        amnt_paid_off=(house.value_usd*paid_off_percent)
+        amnt_paid_off=(house.value_usd*paid_off_percent), savings=savings
         )
     push!(finance_list_rates, fin)
 end
