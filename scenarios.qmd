@@ -142,7 +142,7 @@ finance_OOP = let
     loan_rate = 0.0
     paid_off_percent = 1.0
     amnt_paid_off = paid_off_percent * house.value_usd  # Calculate amnt_paid_off
-    savings = 150_000
+    savings = 190_000
 
     # Create upgraded Finance object using keyword arguments
     Finance(;
@@ -206,8 +206,9 @@ finance_saving = []
 for i in [2, 3, 5, 7]
     #print(i)
     paid_off_percent = 1.0
+    savings = 100_000
     fin = Finance(; loan=2, loan_years=i, loan_rate=0.0, paid_off_percent=paid_off_percent,
-        amnt_paid_off=(house.value_usd*paid_off_percent), savings=100_000
+        amnt_paid_off=(house.value_usd*paid_off_percent), savings=savings
         )
     push!(finance_saving, fin)
 end
@@ -236,3 +237,6 @@ display(p)
 
 ```
 
+Interestingly, the fact that we already have money saved makes our NPVS worse and causes us to elevate less.  This is becasue we're paying more of our costs in expensive today dollars by setting our savings asside.  If we have no savings, then more of the money we're putting away is in the future, when money is cheaper!
+
+This is becasue we're doing this by years we want to save.  If we did it by how much we're willing to save each year things would look different.
