@@ -152,7 +152,8 @@ function draw_surge_distribution()
 end
 
 function draw_discount_rate()
-    return rand(Normal(0.05, 0.03))
+    return 0.055  #fix interest rate at 5.5%
+    #return rand(Normal(0.05, 0.03))
 end
 
 function draw_sow()
@@ -179,21 +180,6 @@ sows_opt = first(sows, N_SOW_opt)
 Write our function we'll use to evaluate financial plans 
 
 
-#```{julia}
-
-p = ModelParams(; house=house, years=2024:2083, finance=finance_basic)  #make our model 
-
-elevations_try = 0:0.5:14  #establish actions to try 
-actions_try = Action.(elevations_try)
-
-#Get all the contruction costs we can afford
-construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= 170_000]
-
-actions_try = actions_try[1:length(construction_costs)]  #get the list of actions we can afford
-
-
-#```
-
 ## Financial_NPVS function
 
 ```{julia}
@@ -205,8 +191,17 @@ function financial_npvs(finance)
     elevations_try = 0:0.5:14  #establish actions to try 
     actions_try = Action.(elevations_try)
 
-    #Get all the contruction costs we can afford
-    construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= p.finance.amnt_paid_off]
+    
+    if p.finance.loan == 1 #if taking out a loan
+        #Get all the contruction costs we can afford through equity
+        construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= p.finance.amnt_paid_off]
+    elseif p.finance.loan == 0 #if paying out of pocket
+        #must have enough in savings to pay
+        construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= p.finance.savings]
+    else # if we're saving up, we can try all possible outcomes
+        construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try]
+    end
+
 
     actions_try = actions_try[1:length(construction_costs)]  #get the list of actions we can afford
     elevations_try = elevations_try[1:length(construction_costs)]  #limit elevations as well since we output this later
@@ -222,6 +217,7 @@ function financial_npvs(finance)
     return elevations_try, npvs_opt, minimizer
 
 end
+
 
 ```
 
@@ -241,6 +237,7 @@ finance_basic = let
     loan_rate = 0.0
     paid_off_percent = 1.0
     amnt_paid_off = paid_off_percent * house.value_usd  # Calculate amnt_paid_off
+    savings = 180_000
 
     # Create Finance object using keyword arguments
     Finance(;
@@ -248,7 +245,8 @@ finance_basic = let
         loan_years = loan_years,
         loan_rate = loan_rate,
         paid_off_percent = paid_off_percent,
-        amnt_paid_off = amnt_paid_off
+        amnt_paid_off = amnt_paid_off,
+        savings = savings
     )
 end
 ```
@@ -312,8 +310,9 @@ finance_saving = []
 for i in [2, 3, 5, 7]
     #print(i)
     paid_off_percent = 1.0
+    savings = 180_000
     fin = Finance(; loan=2, loan_years=i, loan_rate=0.0, paid_off_percent=paid_off_percent,
-        amnt_paid_off=(house.value_usd*paid_off_percent)
+        amnt_paid_off=(house.value_usd*paid_off_percent), savings=savings
         )
     push!(finance_saving, fin)
 end
@@ -364,8 +363,10 @@ Long_Savings = []
 for i in [10, 20, 30, 50]
     #print(i)
     paid_off_percent = 1.0
+    savings=180_000
     fin = Finance(; loan=2, loan_years=i, loan_rate=0.0, paid_off_percent=paid_off_percent,
-        amnt_paid_off=(house.value_usd*paid_off_percent)
+        amnt_paid_off=(house.value_usd*paid_off_percent),
+        savings=180_000
         )
     push!(Long_Savings, fin)
 end
