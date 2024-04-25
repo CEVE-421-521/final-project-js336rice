@@ -741,9 +741,9 @@ elevation_cost(house, 9.5)
 ```
 Note that the cost to elevate our house 9.5 feet, what was previously considered optimal, costs more than 157,000 US dollars, putting it even out of reach for out of pocket payment by our high-savings individuals. 
 
-Only the wealthiest 10% of americsn have more than 111,000 USD in their bank accounts, so our high-savings individuals with more than 120k are doing fairly well, but still can't afford the "optimal" elevation.
+Only the wealthiest 10% of americsn have more than 111,000 USD in their bank accounts, so our high-savings individuals with more than 120k are doing fairly well, but still can't afford the "optimal" elevation. \cite{wealth_2023}
 
-https://www.fool.com/the-ascent/banks/articles/heres-how-much-the-average-rich-person-has-in-the-bank/
+Also, it's worth pointing out that our "low savings" individual has 10k in their bank account, but this is still more than 60% of americans \cite{wealth_2023}
 
 ```{julia}
 #high equity, high savings
@@ -752,9 +752,10 @@ high_savings = 120_000
 
 low_equity = 0.2
 low_savings = 10_000
+#10k is actally still more than 60% of americans according to the motley fool, which is... sad.
 
 ultra_high_savings = 150_000
-#10k is actally still more than 60% of americans according to the motley fool, which is... sad.
+
 ```
 
 ```{julia}
