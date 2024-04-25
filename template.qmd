@@ -475,7 +475,7 @@ p = plot(
     npvs ./ 1000;
     xlabel="Elevation [ft]",
     ylabel="NPV [1000 USD]",
-    title="Out of Pocket Vs Various 5 year loans, 70% paid off",
+    title="Out of Pocket Vs Various 5 year loans",
     label="First $(N_SOW_opt) SOWs, no loan",
     marker=:circle#, color=line_color
 )
