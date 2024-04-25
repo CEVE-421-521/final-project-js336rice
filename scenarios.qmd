@@ -1,0 +1,151 @@
+
+Making a new scenarios file since template is getting hard to work in and unwieldy 
+
+## packages
+
+```{julia}
+using CSV
+using DataFrames
+using DataFramesMeta
+using Distributions
+using LaTeXStrings
+using Metaheuristics
+using Plots
+using Random
+using Unitful
+
+Plots.default(; margin=5Plots.mm)
+
+
+
+using Revise
+using HouseElevation
+#include("Finance.jl")
+#using house
+```
+
+We put in our house in galveston
+
+Choosing Galveston Pier 21, Texas
+The guage is at 29° 18.6 N, 94° 47.6 W
+https://maps.app.goo.gl/GyanSMA2fp9rkVrT9
+
+Our building is 302 17th St, Galveston, TX 77550,
+Home area as estimated by google maps: 30ftx50ft home = 1500ft^2
+Home value from zillow: 247,700 (Round up to 250,000)
+
+The home is 4.41 feet or 1.34 meters above sea level in elevation.
+Looking at it on street view, the house appears to be on concrete blocks about 6 inches tall, giving it an effective height of 4.91 feet.  Round this up to 5 so that it works.
+
+Row 98 from the data is two-story, no basement in Galveston, so we'll be using that for our depth-damage curve.  The home is on concrete blocks, so we can be confident that it doesn't have a basement.
+
+## house + sows
+
+```{julia}
+#| output: false
+house = let
+    haz_fl_dept = CSV.read("data/haz_fl_dept.csv", DataFrame) # read in the file
+    desc = "Two-story, no basement in Galveston"
+    row = @rsubset(haz_fl_dept, :Column1 == 98)[1, :,] # select the row I want
+    area = 1500u"ft^2"
+    height_above_gauge = height_above_gauge = 5u"ft"  
+    House(row; area=area, height_above_gauge=height_above_gauge, value_usd=250_000)
+end
+
+
+
+
+#| output: false
+slr_scenarios = let
+    df = CSV.read("data/slr_oddo.csv", DataFrame)
+    [Oddo17SLR(a, b, c, tstar, cstar) for (a, b, c, tstar, cstar) in eachrow(df)]
+end
+
+function draw_surge_distribution()
+    μ = rand(Normal(5, 1))
+    σ = rand(Exponential(1.25))
+    ξ = rand(Normal(0.1, 0.05))
+    return GeneralizedExtremeValue(μ, σ, ξ)
+end
+
+function draw_discount_rate()
+    #return rand(Normal(0.05, 0.03))
+    return 0.055 #fix interest rate at 5.5%
+end
+
+function draw_sow()
+    slr = rand(slr_scenarios)
+    surge_params = draw_surge_distribution()
+    discount = draw_discount_rate()
+    return SOW(slr, surge_params, discount)
+end
+
+
+#Generate our possible states of the world
+
+
+Random.seed!(421521)
+N_SOW = 10
+N_SOW_opt = 50 # to start
+sows = [draw_sow() for _ in 1:N_SOW]
+sows_opt = first(sows, N_SOW_opt)
+```
+
+## financial_npvs function
+
+```{julia}
+
+#assume physical house and SLR scenarios stay constant, only financial conditions change
+function financial_npvs(finance)
+    p = ModelParams(; house=house, years=2024:2083, finance=finance)  #make our model 
+
+    elevations_try = 0:0.5:14  #establish actions to try 
+    actions_try = Action.(elevations_try)
+
+    #Get all the contruction costs we can afford
+    construction_costs = [elevation_cost(house, elevation) for elevation in elevations_try if elevation_cost(house, elevation) <= p.finance.amnt_paid_off]
+
+    actions_try = actions_try[1:length(construction_costs)]  #get the list of actions we can afford
+    elevations_try = elevations_try[1:length(construction_costs)]  #limit elevations as well since we output this later
+
+    #Run simulations 
+    npvs_opt = [mean([run_sim(a, sow, p) for sow in sows_opt]) for a in actions_try]  
+
+    #get height that minimizes NPV
+    min_npv, min_idx = findmax(npvs_opt)
+    minimizer = elevations_try[min_idx]
+
+    #return elevations we tried (x), npvs(y) and minimizing elevation 
+    return elevations_try, npvs_opt, minimizer
+
+end
+
+```
+
+## finance - Out of Pocket
+
+```{julia}
+#OOP is out of pocket finance
+
+finance_OOP = let
+    loan = 0
+    loan_years = 0
+    loan_rate = 0.0
+    paid_off_percent = 1.0
+    amnt_paid_off = paid_off_percent * house.value_usd  # Calculate amnt_paid_off
+    savings = 100_000
+
+    # Create upgraded Finance object using keyword arguments
+    Finance(;
+        loan = loan,
+        loan_years = loan_years,
+        loan_rate = loan_rate,
+        paid_off_percent = paid_off_percent,
+        amnt_paid_off = amnt_paid_off,
+        savings = savings
+    )
+end
+```
+
+
+

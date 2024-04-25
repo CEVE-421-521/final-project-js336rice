@@ -11,6 +11,7 @@ using Unitful
     loan_rate::Float64 #note that rate is in decimals now
     paid_off_percent::Float64
     amnt_paid_off::Float64
+    savings::Float64
 end
 
 # function annual_loan_cost(p, r, n)
