@@ -859,9 +859,7 @@ display(p)
 When we take out a loan, our maximum NPV is lower, the actions we can take are limited by our finances, and the ideal elevation height is lower. The lower NPV and optimal elevation are again due to the "Up-front" cost of elevation now being higher, this time because instead of just paying the cost of elevation, we now have to pay that cost, plus interest on the loan.
 
 
-
 # Results
-
 
 We'll present our results by looking at four scenarios: One where the homeowner has high equity and high savings, one where they have low equity and high savings, high equity and low savings, and low equity and low savings.
 
@@ -922,34 +920,25 @@ plot_LHSE_scenario(HEUHS, "High Equity ($(Int64(high_equity*100))%), Ultra High 
 ```
 
 
-
 Inspite of the high potential for NPV when paying out of pocket, in all of the other scenarios we looked at, the NPV of paying out of pocket was lower than that of saving up or taking out a loan.  This is due to the high cost of construction making paying for an optimal elevation without some type of finanical plan out of reach even for wealthy individuals.  The Ultra-high savings individual is the only scenario where the NPV of paying out of pocket is higher than loans or saving because it's the only one where this strategy was able to be used to its full potential.
 
 # Conclusions
 
 ## Discussion
 
-Analyze the implications of your results for climate risk management.
-Consider the context of the class themes and discuss how your findings contribute to the understanding of climate risk assessment.
-Identify any limitations of your approach and suggest potential improvements for future work.
-
 The results indicate that although paying up front for elevation *can* return the highest Net Present Value, this is only true if the person paying to elevate their home has enough money to elevate it to an appropriate height.  
 
 This might incline someone to take out a loan instead of paying up front.  And since taking out a loan increases the cost of elevation through incurring interest on the initial cost, the elevation that yields an ideal NPV is lower than what we previoulsy saw when we were looking only at out-of-pocket elevation simulations.  
 
-While saving money may seem like a potential solution to this, since one does not incur interest if they do so, out simulations actually reveal it to be a very bad option.  Saving to elevate devalues the elevation itself becasue less years are spent out of harm's way, causing it to favor lower elevations while also having lower NPVs.  
+While saving money may seem like a potential solution to this, since one does not incur interest if they do so, our simulations reveal it to be a very bad option.  Saving to elevate devalues the elevation itself becasue less years are spent out of harm's way, causing the results to favor lower elevations while also having lower NPVs.  
 
 Our findings imply that if a government wanted to encourage people to elevate their homes to make their community more resilient to floods, the best way to do that in terms of return on total value is to pay for some or all of the cost of elevating people's homes.  If this were not affordable however, then the next best option would be to offer sub-market rate loans that anyone can take out, so that even people with low equity can elevate their properties.  
 
 Future studies could investigate how savings interact with loans if people have the option to put their savigns into their loans, thus reducing the amount they need to borrow and pay interest on.
 
-A main limitation of this work is that it concludes that the solution to flood damage is government intervention either through direct payments or loans, but doesn't conduct an analysis on the costs and benefits of these options from a governement's perspective.  After a flood, great financial costs are incurred due to physical damages on the home, but there is also a cost in commerce and damage to the local economy when people are rebuilding their communities instead of engaging in status quo economic activities, like working and purchasing goods.  Additionally, money that otherwise would've circulated in the local economy is spent on repairing homes.  While the government would certainly unlock benefits from avoiding the opportunity cost in taxes from a flood damaged community, how large those benefits are in comparison to the costs of elevation could be analyzed in future work.
+A main limitation of this work is that it concludes that the solution to flood damage is government intervention either through direct payments or loans, but doesn't conduct an analysis on the costs and benefits of these options from a governement's perspective.  After a flood, great financial costs are incurred due to physical damages on the home, but there is also a cost in commerce and damage to the local economy when people are rebuilding their communities instead of engaging in status quo economic activities, like working and purchasing goods.  Additionally, money that otherwise would've circulated in the local economy is spent on repairing homes.  While the government would certainly unlock benefits from avoiding the opportunity cost in taxes lost due to a flood damaged community, how large those benefits are in comparison to the costs of elevation could be analyzed in future work.
 
 ## Conclusions
-
-Summarize the key findings of your project and reiterate the significance of your implemented feature in addressing the problem statement.
-Discuss the broader implications of your work for climate risk management and the potential for further research in this area.
-
 
 Our key findings are that paying to elevate your home up front is the best option, if you can afford it.  Otherwise, the second best option is to take out a loan, and the worst option is to save up to elevate your home.  These are real decisions that real people will need to make as our climate changes and storms become more intense, and analyzing how our models interact with household finances can help homeowners make better choices.  
 
