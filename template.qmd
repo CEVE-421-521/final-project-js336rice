@@ -862,8 +862,10 @@ It's notable that you need about 150k in your savings to have all elevation opti
 
 ```{julia}
 HEUHS = gen_finances(high_equity, ultra_high_savings, house)
-plot_LHSE_scenario(HEUHS, "High Equity ($(high_equity*100)%), Ultra High Savings ($(ultra_high_savings/1000)K)")
+plot_LHSE_scenario(HEUHS, "High Equity ($(high_equity*100)%), Ultra High Savings ($(Int64(ultra_high_savings/1000))K)")
 ```
+
+
 
 Inspite of the high potential for NPV when paying out of pocket, in all of the other scenarios we looked at, the NPV of paying out of pocket was lower than that of saving up or taking out a loan.  This is due to the high cost of construction making paying for an optimal elevation without some type of finanical plan out of reach even for wealthy individuals.  This is the only scenario where NPV of paying out of pocket is higher than loans or saving because it's the only one where this strategy was able to be used to its full potential.
 
@@ -898,7 +900,6 @@ Our key findings are that paying to elevate your home up front is the best optio
 We also saw implications for government action, and that a government-backed loan for homewoners with low equity can have extremely positive impacts in helping people elevate their homes.
 
 Further research could investigate how pre-existing savings interact with loans when the two are combined, and what the financial circumstances look like from the government's point of view; how the cost of paying to elevate a community or to give out a loan compares to the savings of not having that community's tax base harmed by flood damage. 
-
 
 
 # References
