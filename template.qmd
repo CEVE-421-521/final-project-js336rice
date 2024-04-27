@@ -44,9 +44,9 @@ execute:
 
 ## Problem Statement
 
-So far, our simulations have considered the Net Present Value of home elevation under the assumption that homeowners will pay for their home elevation out of pocket.  In reality, people have to chose between paying out of pocket (if this is even something they can afford), taking out a loan, or saving up.  
+So far, our simulations have considered the net present value (NPV) of home elevation under the assumption that homeowners will pay for their home elevation out of pocket.  In reality, people have to choose between paying out of pocket to whatever maximum height they can afford, taking out a loan, or saving up.  
 
-Each of these options has tradeoffs in total cost, yearly cost, the cost of damages,and in NPV.  In this paper, we will analize these tradeoffs. 
+Each of these options has tradeoffs in total cost, yearly cost, the cost of damages, and in NPV.  In this paper, we will analyze these tradeoffs. 
 
 ## Selected Feature
 
@@ -862,7 +862,7 @@ It's notable that you need about 150k in your savings to have all elevation opti
 
 ```{julia}
 HEUHS = gen_finances(high_equity, ultra_high_savings, house)
-plot_LHSE_scenario(HEUHS, "High Equity ($(high_equity*100)%), Ultra High Savings ($(Int64(ultra_high_savings/1000))K)")
+plot_LHSE_scenario(HEUHS, "High Equity ($(Int64(high_equity*100))%), Ultra High Savings ($(Int64(ultra_high_savings/1000))K)")
 ```
 
 
