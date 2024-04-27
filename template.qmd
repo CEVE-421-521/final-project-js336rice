@@ -60,10 +60,6 @@ If we pay out of pocket, then nothing changes and run_sim operates as it did bef
 
 # Literature Review
 
-Provide a brief overview of the theoretical background related to your chosen feature.
-Cite at least two relevant journal articles to support your approach (see [Quarto docs](https://quarto.org/docs/authoring/footnotes-and-citations.html) for help with citations).
-Explain how these articles contribute to the justification of your selected feature.
-
 Whether this Finance feature is used to inform policy or the decisions of individual property owners, it has justification in pre-existing literature.
 
 Chenet et. Al (2021) \cite{finance_and_climate:2021} discusses how policy makers ought to take a precautionary approach to addressing the financial impacts of climate change, and that policy "should help justify immediate preventative action".  They argue for using scenario analysis and stress testing to evaluate potential policies.  To this end, this feature could give policy makers a clearer picture about what they ought to do.  Right now, their options include giving homeowners money to elevate their homes, forcing them to pay immediately for home elevation, setting up loan programs for home elevation, and forcing homeowners to save up for home elevation.  Our new Finance feature can be used to compare these three strategies.
@@ -247,7 +243,7 @@ end
 ```
 
 
-Now let's get the results of paying up front
+Now let's get the results of paying up front with 250,000 in our savings account
 
 ```{julia}
 #| output: false
@@ -339,9 +335,11 @@ display(p)
 
 ```
 
+Note that these results assume we already having 180,000 USD in our savings account, which is quite a lot.
+
 Results of this graph show two interesting things:
 
-1. NPV of saving is always a lot lower than paying up front.  This makes sense, since we're increasing construction cost with inflation, so the only change to the NPV will be more damages while we wait to elevate the house.
+1. NPV of saving is often a lot lower than paying up front.  This makes sense, since we're increasing construction cost with inflation, so the only change to the NPV will be more damages while we wait to elevate the house.
 
 2. NPV results recommend lower elevations if we chose to wait.  This seems strange at first, since most people might save money so they can elevate higher, and you'd think that if we do wait to elevate, it'd make more sense to do a higher elevation to compensate for the damages we experienced in the first few years.  
 
@@ -393,6 +391,8 @@ plot_many(Long_Savings, p)
 display(p)
 
 ```
+
+Again, keep in mind we're doing this with 180,000 dollars already in our savings account.
 
 ## Different loan durations
 
