@@ -742,6 +742,31 @@ end
 
 We should validate that the out-of-pocket elevation limiting is working as expected, and that homeowners can elevate up to heights they can afford with their savings, but not beyond that.
 
+Make a household that can pay for some but not all elevation heights out of pocket:
+
+```{julia}
+finance_OOP = let
+    loan = 0
+    loan_years = 0
+    loan_rate = 0.0
+    paid_off_percent = 1.0
+    amnt_paid_off = paid_off_percent * house.value_usd  # Calculate amnt_paid_off
+    savings = 180_000
+
+    # Create upgraded Finance object using keyword arguments
+    Finance(;
+        loan = loan,
+        loan_years = loan_years,
+        loan_rate = loan_rate,
+        paid_off_percent = paid_off_percent,
+        amnt_paid_off = amnt_paid_off,
+        savings = savings
+    )
+end
+
+```
+
+Plot a comparison between it, and a household that can elevate to the maximum height out of pocket:
 
 ```{julia}
 
@@ -754,8 +779,14 @@ p = plot(
     label="Out of pocket",
     marker=:circle#, color=line_color
 )
+line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
+vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
 
+plot_many(finance_OOP, p)
+display(p)
 ```
+
+We can see that our home that is being elevated out of a shallower pocket will have deeper flooding!  This aligns with what we'd expect.
 
 
 We can also make sure our loan and savings features are working as expected by analyzing the impact they have on outcomes.
