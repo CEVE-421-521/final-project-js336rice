@@ -50,9 +50,6 @@ Each of these options has tradeoffs in total cost, annual cost, the cost of dama
 
 ## Selected Feature
 
-Describe the feature you have selected to add to the existing decision-support tool.
-Discuss how this feature relates to the problem statement and its potential to improve climate risk assessment.
-
 The new feature I've chosen to implement is a struct called "Finance".  This struct describes the financial conditions of the homeowner, and the plan to elevate the home.  It includes a loan variable, that describes if the owners will take out a loan to finance the elevation, save up for it, or if they will pay out of pocket.  It also contains a loan_rate variable for the interest on potential loans, loan_years, which describes how long homeowners will either save up for or pay out a loan for, paid_off_percent (the amount of the house that's paid off as a decimal), paid_off_amnt (the total value of the home that's paid off in US dollars), and Savings, the amount of money in the homeowners's savings account in US Dollars. 
 
 In addition to this new struct, run_sim has been modified to take it into account.  So if we choose to save up, our action of elevating the home is delayed until enough money has been saved to do so, and the cost of construction will be increased with the discount rate of that scenario for however long it takes us to save money.  Money already in the savings account reduces the amount of money we need to save.
@@ -67,13 +64,11 @@ Provide a brief overview of the theoretical background related to your chosen fe
 Cite at least two relevant journal articles to support your approach (see [Quarto docs](https://quarto.org/docs/authoring/footnotes-and-citations.html) for help with citations).
 Explain how these articles contribute to the justification of your selected feature.
 
-Whether this feature is used to inform policy or the decisions of individual property owners, it has justification in pre-existing literature.
+Whether this Finance feature is used to inform policy or the decisions of individual property owners, it has justification in pre-existing literature.
 
-Chenet et. Al (2021) \cite{finance_and_climate:2021} discusses how policy makers ought to take a precautionary approach to addressing the financial impacts of climate change, and that policy "should help justify immediate preventative action".  They argue for using scenario analysis and stress testing to evaluate potential policies.  To this end, this feature could give policy makers a clearer picture about what they ought to do: give homeowners money to elevate their homes or force them to pay for home elevation, set up loan programs for home elevation, and forcing homeowners to save up for home elevation.  This feature can be used to compare these three strategies.
+Chenet et. Al (2021) \cite{finance_and_climate:2021} discusses how policy makers ought to take a precautionary approach to addressing the financial impacts of climate change, and that policy "should help justify immediate preventative action".  They argue for using scenario analysis and stress testing to evaluate potential policies.  To this end, this feature could give policy makers a clearer picture about what they ought to do.  Right now, their options include giving homeowners money to elevate their homes, forcing them to pay immediately for home elevation, setting up loan programs for home elevation, and forcing homeowners to save up for home elevation.  Our new Finance feature can be used to compare these three strategies.
 
-Tools that communicate the propery-level impacts of flooding to homeowners and community leaders are advocated for in \cite{property_impacts:2020} .  This project can be thought of as an extension of this idea, that the same benefits that can be extracted from communicating the costs and benefits of home elevation can also be extracted from providing more information about how those costs and benefits change under different financial plans. 
-
-
+Tools that communicate the propery-level impacts of flooding to homeowners and community leaders are directly advocated for in \cite{property_impacts:2020}.  This project can be thought of as an extension of this idea, that the same benefits that can be extracted from communicating the costs and benefits of home elevation can also be extracted from providing more information about how those costs and benefits change under different financial plans. 
 
 # Methodology
 
