@@ -46,22 +46,20 @@ execute:
 
 So far, our simulations have considered the net present value (NPV) of home elevation under the assumption that homeowners will pay for their home elevation out of pocket.  In reality, people have to choose between paying out of pocket to whatever maximum height they can afford, taking out a loan, or saving up.  
 
-Each of these options has tradeoffs in total cost, yearly cost, the cost of damages, and in NPV.  In this paper, we will analyze these tradeoffs. 
+Each of these options has tradeoffs in total cost, annual cost, the cost of damages, and in NPV.  We seek to analyze these tradeoffs by running simulations of each action in multiple possible futures with respect to flooding. 
 
 ## Selected Feature
 
 Describe the feature you have selected to add to the existing decision-support tool.
 Discuss how this feature relates to the problem statement and its potential to improve climate risk assessment.
 
-The new feature I've chosen to implement is a struct called "Finance".  This struct describes the financial conditions of the home, and the plan to elevate it.  It includes a loan variable, that describes if the owners will take out a loan to finance the elevation, save up for it, or if they will pay out of pocket.  It also contains a loan_rate variable for the interest on potential loans, loan_years, which describes how long homeowners will either save up for or pay out a loan for, paid_off_percent, the amount of the house that's paid off as a decimal, and paid_off_amnt (the total value of the home that's paid off in US dollars), and savings, the amount of money in the homeowners's savings account. 
+The new feature I've chosen to implement is a struct called "Finance".  This struct describes the financial conditions of the homeowner, and the plan to elevate the home.  It includes a loan variable, that describes if the owners will take out a loan to finance the elevation, save up for it, or if they will pay out of pocket.  It also contains a loan_rate variable for the interest on potential loans, loan_years, which describes how long homeowners will either save up for or pay out a loan for, paid_off_percent (the amount of the house that's paid off as a decimal), paid_off_amnt (the total value of the home that's paid off in US dollars), and Savings, the amount of money in the homeowners's savings account in US Dollars. 
 
-In addition to this new struct, run_sim has been modified to take it into account.  So if we chose to save up, our action of elevating the home is delayed until enough money has been saved to do so, and the cost of construction will be increased with the discount rate of that scenario. 
+In addition to this new struct, run_sim has been modified to take it into account.  So if we choose to save up, our action of elevating the home is delayed until enough money has been saved to do so, and the cost of construction will be increased with the discount rate of that scenario for however long it takes us to save money.  Money already in the savings account reduces the amount of money we need to save.
 
-If we choose to take out a loan, we will elevate the home immediately, but then pay off the loan annualy according to the pre-determined interest rate, and the discount rate will again be accounted for in the value of these payments.  
+If we choose to take out a loan, we will elevate the home immediately, but then pay off the loan annualy according to the pre-determined interest rate, and the discount rate will again be accounted for in the present value of these payments.  
 
-If we pay out of pocket, then nothing changes, and run_sim operates as it did before, but we can't elevate above what we can afford in our savings account.
-
-If we save up, then we make annual payments until we've saved up enough money to elevate.  Whatever's already in the savings account acts as a base we can save on top of.
+If we pay out of pocket, then nothing changes and run_sim operates as it did before, except that we now can't elevate above what we can afford given the money in our savings account.
 
 # Literature Review
 
