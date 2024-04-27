@@ -751,7 +751,7 @@ finance_OOP = let
     loan_rate = 0.0
     paid_off_percent = 1.0
     amnt_paid_off = paid_off_percent * house.value_usd  # Calculate amnt_paid_off
-    savings = 180_000
+    savings = 150_000
 
     # Create upgraded Finance object using keyword arguments
     Finance(;
@@ -764,6 +764,8 @@ finance_OOP = let
     )
 end
 
+elevations_oop, npvs_oop, min_oop = financial_npvs(finance_OOP)
+
 ```
 
 Plot a comparison between it, and a household that can elevate to the maximum height out of pocket:
@@ -775,14 +777,26 @@ p = plot(
     npvs ./ 1000;
     xlabel="Elevation [ft]",
     ylabel="NPV [1000 USD]",
-    title="Out of Pocket Vs Various saving periods",
-    label="Out of pocket",
+    title="Out of pocket with different savings",
+    label="Sufficient Savings",
     marker=:circle#, color=line_color
 )
 line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
 vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
 
-plot_many(finance_OOP, p)
+p = plot!(
+    elevations_oop,
+    npvs_oop ./ 1000;
+    xlabel="Elevation [ft]",
+    ylabel="NPV [1000 USD]",
+    #title="Out of pocket with different savings",
+    label="150K in Savings",
+    marker=:circle#, color=line_color
+)
+line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
+vline!([min_oop]; label="$(min_oop)ft elevation", linestyle=:dash, color=line_color)
+
+#plot_many([finance_OOP], p)
 display(p)
 ```
 
@@ -800,7 +814,7 @@ p = plot(
     npvs ./ 1000;
     xlabel="Elevation [ft]",
     ylabel="NPV [1000 USD]",
-    title="Out of Pocket Vs Various saving periods",
+    title="Out of Pocket Vs Saving",
     label="Out of pocket",
     marker=:circle#, color=line_color
 )
@@ -809,7 +823,7 @@ p = plot(
 line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
 vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
 
-plot_many(finance_saving[3], p)
+plot_many([finance_saving[3]], p)
 display(p)
 
 ```
@@ -827,7 +841,7 @@ p = plot(
     npvs ./ 1000;
     xlabel="Elevation [ft]",
     ylabel="NPV [1000 USD]",
-    title="Out of Pocket Vs Various payment periods",
+    title="Out of Pocket Vs Loan",
     label="First $(N_SOW_opt) SOWs, no loan",
     marker=:circle#, color=line_color
 )
@@ -836,12 +850,12 @@ p = plot(
 line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
 vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
 
-plot_many(finance_list_years[3], p)
+plot_many([finance_list_years[3]], p)
 display(p)
 
 ```
 
-Our maximum NPV is lower, the actions we can take are limited by our finances, and the ideal elevation height is lower.   All of these things are due to the "Up-front" cost of elevation now being higher, because instead of just paying the cost of elevation, we now have to pay that cost, plus interest on the loan.
+Our maximum NPV is lower, the actions we can take are limited by our finances, and the ideal elevation height is lower. The lower NPV and optimal elevation are again due to the "Up-front" cost of elevation now being higher, this time because instead of just paying the cost of elevation, we now have to pay that cost, plus interest on the loan.
 
 
 
