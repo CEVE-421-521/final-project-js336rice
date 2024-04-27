@@ -74,13 +74,14 @@ Tools that communicate the propery-level impacts of flooding to homeowners and c
 
 ## Implementation
 
+Running this isn't usually necessary, but sometimes if changes to the Finance package aren't being seen in the code here, running it can fix that problem.
 ```{julia}
 import Pkg 
 Pkg.status()  # Note the paths for your local packages
 Pkg.gc()  # Garbage collect and delete cached package files
 ```
 
-
+Load packages
 ```{julia}
 using CSV
 using DataFrames
@@ -95,6 +96,7 @@ using Unitful
 Plots.default(; margin=5Plots.mm)
 ```
 
+Load Revise and our custom package, HouseElevation
 ```{julia}
 using Revise
 using HouseElevation
@@ -131,7 +133,7 @@ house = let
 end
 ```
 
-
+Create functions that define our possible futures
 ```{julia}
 #| output: false
 slr_scenarios = let
@@ -167,15 +169,12 @@ N_SOW = 10
 N_SOW_opt = 50 # to start
 sows = [draw_sow() for _ in 1:N_SOW]
 sows_opt = first(sows, N_SOW_opt)
-
-
 ```
 
 
-Write our function we'll use to evaluate financial plans 
-
-
 ## Financial_NPVS function
+
+Write our function we'll use to evaluate financial plans 
 
 ```{julia}
 
@@ -216,12 +215,9 @@ end
 
 ```
 
-Basic financing, just paying up fronts
-
-
-println(methods(Finance))
-println(fieldtypes(Finance))
 ## Finance_Basic
+
+Define what basic financing for someone who can pay upfront looks like
 
 ```{julia}
 
@@ -247,7 +243,7 @@ end
 ```
 
 
-Now lets calculate our basic finance options
+Now let's look at the results of paying up front
 
 ```{julia}
 
@@ -256,6 +252,7 @@ elevations_tried, npvs, min = financial_npvs(finance_basic)
 ```
 
 ## plot_many
+
 Define our function to plot many financial scenarios 
 
 ```{julia}
@@ -295,7 +292,7 @@ end
 
 ## reasonable saving time
 
-Generate many financial scenarios where we save up for different periods of time
+Generate many financial scenarios where we save up for different (reasonable) periods of time
 
 
 ```{julia}
@@ -351,6 +348,8 @@ We can demonstrate this more clearly by displaying some extremely long saving pe
 
 ## Long saving time
 
+Define finances of saving for very long periods of time
+
 ```{julia}
 
 Long_Savings = []
@@ -368,6 +367,8 @@ end
 
 println(Long_Savings)
 ```
+
+Plot long saving scenarios
 
 ```{julia}
 
@@ -411,7 +412,7 @@ end
 println(finance_list_years)
 ```
 
-Plot our scenarios of different years to pay off the loan 
+Plot our scenarios of different amounts of time to pay off the loan 
 
 ```{julia}
 
@@ -454,6 +455,7 @@ end
 println(finance_list_rates)
 ```
 
+Plot what our finances look like with different interest rates
 
 ```{julia}
 
@@ -485,7 +487,7 @@ display(p)
 
 Now we want to compare NPVS and annual costs for all of these scenarios
 
-Make a function to get NPV, annual cost, and optimal elevatin
+Make a function to get NPV, annual cost, and optimal elevation
 ```{julia}
 
 function annual_loan_cost(p, r, n)
@@ -518,6 +520,9 @@ end
 
 ```
 
+Write a function that obtain the npvs, annual costs, and optimal elevations of different scenarios.
+
+Also write a function that'll help us plot these results.
 
 ```{julia}
 
@@ -550,7 +555,8 @@ end
 
 
 ```
-get_costs(finance_list_rates)
+
+Plot our results
 
 ```{julia}
 
@@ -584,6 +590,7 @@ display(Annual_v_npv_plot)
 
 ## compare NPVS and construction heights for all these different scenarios 
 
+Write a more generalized plotting function since we'll be comparing a few different things now
 
 ```{julia}
 function general_plot(x, y, finance, initial_plot, label)
@@ -606,6 +613,7 @@ function general_plot(x, y, finance, initial_plot, label)
 end
 ```
 
+Plot how optimal height of different plans compares to NPV
 
 ```{julia}
 height_v_npv_plot = plot(
@@ -628,6 +636,8 @@ display(height_v_npv_plot)
 
 ## compare annual costs and construction heights
 
+Plot how optimal height of different plans compares to annual costs
+
 ```{julia}
 height_v_npv_plot = plot(
     [annual_cost] ./ 1000,
@@ -648,11 +658,11 @@ display(height_v_npv_plot)
 
 ## Low and high savings and equity (LHSE) homes
 
-Now that we're all set up, lets look at scenarios where we have high and low savings and high and low equity (LHSE).
+Now that we're all set up, lets look at scenarios where we have high and low savings and high and low equity.
 
 We'll assume that market loans are run at 7% interest and not consider other interest rates, except for govenrment loans for people with low equity and low savings at 7.5%.  
 
-Make a function that generates the finance outcomes for these different plans given a set equity and savings:
+Make a function that generates the financial outcomes for these different plans given a set equity and savings:
 
 ```{julia}
 function gen_finances(equity, savings, house)
@@ -727,25 +737,32 @@ end
 ```
 
 
-
-
-
-
-You should make your modifications in either the `HouseElevation` or `ParkingGarage` module.
-Detail the steps taken to implement the selected feature and integrate it into the decision-support tool.
-Include code snippets and explanations where necessary to clarify the implementation process.
-
 ## Validation
 
-As we have seen in labs, mistakes are inevitable and can lead to misleading results.
-To minimize the risk of errors making their way into final results, it is essential to validate the implemented feature.
-Describe the validation techniques used to ensure the accuracy and reliability of your implemented feature.
-Discuss any challenges faced during the validation process and how they were addressed.
 
-We can validate the finance feature by obseving its impacts across the graphs we previously made for saving across several years, and taking out a loan.
+We should validate that the out-of-pocket elevation limiting is working as expected, and that homeowners can elevate up to heights they can afford with their savings, but not beyond that.
+
 
 ```{julia}
-#| output: false
+
+p = plot(
+    elevations_tried,
+    npvs ./ 1000;
+    xlabel="Elevation [ft]",
+    ylabel="NPV [1000 USD]",
+    title="Out of Pocket Vs Various saving periods",
+    label="Out of pocket",
+    marker=:circle#, color=line_color
+)
+
+```
+
+
+We can also make sure our loan and savings features are working as expected by analyzing the impact they have on outcomes.
+
+Let's look at how things change when we save for several years:
+
+```{julia}
 
 p = plot(
     elevations_tried,
@@ -761,13 +778,18 @@ p = plot(
 line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
 vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
 
-plot_many(finance_saving, p)
+plot_many(finance_saving[3], p)
 display(p)
 
 ```
 
+When we save, elevation costs increase over time with inflation, so the cost to elevate is higher, lowering both NPV and the ideal elevation height.  Additionally, the benefits of elevating are diminished, because any flooding we would've been protected from by elevating might've already happened while we were saving up.  This lowers both the NPV and the ideal elevation height even more.
+
+
+
+Let's see how things change when we take out a loan: 
 ```{julia}
-#| output: false
+
 
 p = plot(
     elevations_tried,
@@ -783,12 +805,15 @@ p = plot(
 line_color = p.series_list[end][:linecolor]  #make the vertical line color the same as the horizontal line
 vline!([min]; label="$(min)ft elevation", linestyle=:dash, color=line_color)
 
-plot_many(finance_list_years, p)
+plot_many(finance_list_years[3], p)
 display(p)
 
 ```
 
-For both of these graphs, the outputs are consistent with what we would expect if we took these actions:  NPV is lower, the actions we can take are limited by our finances, and the ideal elevation height is lowered.  When we take out a loan this is due to the upfront cost of elevating being higher due to the interest rate on the loan, and when we save, this is due partly becasue elevation costs increases over time with inflation, and partly becasue the benefits of elevating are somewhat diminished after a few years of potential (or real) flooding are behind us.
+Our maximum NPV is lower, the actions we can take are limited by our finances, and the ideal elevation height is lower.   All of these things are due to the "Up-front" cost of elevation now being higher, because instead of just paying the cost of elevation, we now have to pay that cost, plus interest on the loan.
+
+
+
 
 
 # Results
