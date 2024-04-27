@@ -76,6 +76,7 @@ Tools that communicate the propery-level impacts of flooding to homeowners and c
 
 Running this isn't usually necessary, but sometimes if changes to the Finance package aren't being seen in the code here, running it can fix that problem.
 ```{julia}
+#| output: false
 import Pkg 
 Pkg.status()  # Note the paths for your local packages
 Pkg.gc()  # Garbage collect and delete cached package files
@@ -83,6 +84,7 @@ Pkg.gc()  # Garbage collect and delete cached package files
 
 Load packages
 ```{julia}
+#| output: false
 using CSV
 using DataFrames
 using DataFramesMeta
@@ -98,6 +100,7 @@ Plots.default(; margin=5Plots.mm)
 
 Load Revise and our custom package, HouseElevation
 ```{julia}
+#| output: false
 using Revise
 using HouseElevation
 #include("Finance.jl")
@@ -164,6 +167,7 @@ end
 Generate our possible states of the world
 
 ```{julia}
+#| output: false
 Random.seed!(421521)
 N_SOW = 10
 N_SOW_opt = 50 # to start
@@ -177,7 +181,7 @@ sows_opt = first(sows, N_SOW_opt)
 Write our function we'll use to evaluate financial plans 
 
 ```{julia}
-
+#| output: false
 #assume physical house and SLR scenarios stay constant, only financial conditions change
 function financial_npvs(finance)
     p = ModelParams(; house=house, years=2024:2083, finance=finance)  #make our model 
@@ -221,7 +225,7 @@ Define what basic financing for someone who can pay upfront looks like
 
 ```{julia}
 
-
+#| output: false
 finance_basic = let
     loan = 0
     loan_years = 0
@@ -243,10 +247,10 @@ end
 ```
 
 
-Now let's look at the results of paying up front
+Now let's get the results of paying up front
 
 ```{julia}
-
+#| output: false
 elevations_tried, npvs, min = financial_npvs(finance_basic)
 
 ```
@@ -256,6 +260,7 @@ elevations_tried, npvs, min = financial_npvs(finance_basic)
 Define our function to plot many financial scenarios 
 
 ```{julia}
+#| output: false
 function plot_many(finance_list, initial_plot)
 
     
@@ -296,7 +301,7 @@ Generate many financial scenarios where we save up for different (reasonable) pe
 
 
 ```{julia}
-
+#| output: false
 finance_saving = []
 
 for i in [2, 3, 5, 7]
@@ -309,7 +314,6 @@ for i in [2, 3, 5, 7]
     push!(finance_saving, fin)
 end
 
-println(finance_saving)
 ```
 
 Plot our saving options
@@ -351,7 +355,7 @@ We can demonstrate this more clearly by displaying some extremely long saving pe
 Define finances of saving for very long periods of time
 
 ```{julia}
-
+#| output: false
 Long_Savings = []
 
 for i in [10, 20, 30, 50]
@@ -365,7 +369,6 @@ for i in [10, 20, 30, 50]
     push!(Long_Savings, fin)
 end
 
-println(Long_Savings)
 ```
 
 Plot long saving scenarios
@@ -396,7 +399,7 @@ display(p)
 Generate many financial scenarios with different years to pay off the loan at a 7% interest rate
 
 ```{julia}
-
+#| output: false
 finance_list_years = []
 
 for i in [3, 5, 7, 10]
@@ -409,7 +412,7 @@ for i in [3, 5, 7, 10]
     push!(finance_list_years, fin)
 end
 
-println(finance_list_years)
+
 ```
 
 Plot our scenarios of different amounts of time to pay off the loan 
@@ -439,7 +442,7 @@ display(p)
 Generate many financial scenarios with different interest rates
 
 ```{julia}
-
+#| output: false
 finance_list_rates = []
 
 for i in range(start=3, stop=9, length=4)
@@ -452,16 +455,11 @@ for i in range(start=3, stop=9, length=4)
     push!(finance_list_rates, fin)
 end
 
-println(finance_list_rates)
 ```
 
 Plot what our finances look like with different interest rates
 
 ```{julia}
-
-#colors = [colorant"red", colorant"green", colorant"blue", colorant"orange", colorant"purple"]
-
-#line_color = colors[1]
 
 p = plot(
     elevations_tried,
@@ -489,7 +487,7 @@ Now we want to compare NPVS and annual costs for all of these scenarios
 
 Make a function to get NPV, annual cost, and optimal elevation
 ```{julia}
-
+#| output: false
 function annual_loan_cost(p, r, n)
     #P is principle amount, r is rate, n is number of years
     a = p * ( r * ((1+r)^n)  / ( (1+r)^n - 1 ) )
@@ -525,7 +523,7 @@ Write a function that obtain the npvs, annual costs, and optimal elevations of d
 Also write a function that'll help us plot these results.
 
 ```{julia}
-
+#| output: false
 
 function get_costs(finances)
     figures = annual_v_npv.(finances)
@@ -593,6 +591,7 @@ display(Annual_v_npv_plot)
 Write a more generalized plotting function since we'll be comparing a few different things now
 
 ```{julia}
+#| output: false
 function general_plot(x, y, finance, initial_plot, label)
     # 1 = best_npvs, 2 = annual_costs, 3 = best_elevation
     values = collect(get_costs(finance)) #get our values to plot.  
@@ -665,6 +664,7 @@ We'll assume that market loans are run at 7% interest and not consider other int
 Make a function that generates the financial outcomes for these different plans given a set equity and savings:
 
 ```{julia}
+#| output: false
 function gen_finances(equity, savings, house)
 
     loan_finances = [] #7.0% bank loan
@@ -711,7 +711,7 @@ end
 Now make a function that plots the outcomes for all of these scenarios:
 
 ```{julia}
-
+#| output: false
 function plot_LHSE_scenario(LHSE_options, title)
 
     OOP, saving_finances, loan_finances, gov_loan = LHSE_options
@@ -745,6 +745,7 @@ We should validate that the out-of-pocket elevation limiting is working as expec
 Make a household that can pay for some but not all elevation heights out of pocket:
 
 ```{julia}
+#| output: false
 finance_OOP = let
     loan = 0
     loan_years = 0
@@ -855,27 +856,19 @@ display(p)
 
 ```
 
-Our maximum NPV is lower, the actions we can take are limited by our finances, and the ideal elevation height is lower. The lower NPV and optimal elevation are again due to the "Up-front" cost of elevation now being higher, this time because instead of just paying the cost of elevation, we now have to pay that cost, plus interest on the loan.
-
-
+When we take out a loan, our maximum NPV is lower, the actions we can take are limited by our finances, and the ideal elevation height is lower. The lower NPV and optimal elevation are again due to the "Up-front" cost of elevation now being higher, this time because instead of just paying the cost of elevation, we now have to pay that cost, plus interest on the loan.
 
 
 
 # Results
 
-Present the results obtained from the enhanced decision-support tool.
-Use tables, figures, and visualizations to clearly communicate the outcomes.
-Provide sufficient detail to demonstrate how the implemented feature addresses the problem statement.
-Use the `#| output: false` and/or `#| echo: false` tags to hide code output and code cells in the final report except where showing the output (e.g.g, a plot) or the code (e.g., how you are sampling SOWs) adds value to the discussion.
-You may have multiple subsections of results, which you can create using `##`.
 
-
-We'll present our results by looking at four scenarios: One where the homeowner has high equity and high savings, one where they have low equity and high savings, high equity and low savings, and low equity and high savings.
+We'll present our results by looking at four scenarios: One where the homeowner has high equity and high savings, one where they have low equity and high savings, high equity and low savings, and low equity and low savings.
 
 ```{julia}
 println("The cost to elevate our home 9.5 feet is ", elevation_cost(house, 9.5))
 ```
-Note that the cost to elevate our house 9.5 feet, what was previously considered optimal, is more than 157,000 US dollars, putting it even out of reach for out of pocket payment by our high-savings individuals. 
+Note that the cost to elevate our house 9.5 feet, what was previously considered optimal when paying out of pocket, is more than 157,000 US dollars, putting it out of reach for out of pocket payment even by our high-savings individuals. 
 
 Only the wealthiest 10% of americsn have more than 111,000 USD in their bank accounts, so our high-savings individuals with more than 120,000 are doing fairly well, but still can't afford the "optimal" elevation. \cite{wealth_2023}
 
@@ -921,7 +914,7 @@ LELS = gen_finances(low_equity, low_savings, house)
 plot_LHSE_scenario(LELS, "Low Equity ($(low_equity*100)%), Low Savings ($(low_savings/1000)K)")
 ```
 
-It's notable that you need about 150k in your savings to have all elevation options open to you.  We can see this if we make a chart for someone with very high savings. 
+It's notable that you need about 150k in your savings to have all elevation options open to you.  We can see this if we make a chart for someone with "ultra high" savings. 
 
 ```{julia}
 HEUHS = gen_finances(high_equity, ultra_high_savings, house)
@@ -930,7 +923,7 @@ plot_LHSE_scenario(HEUHS, "High Equity ($(Int64(high_equity*100))%), Ultra High 
 
 
 
-Inspite of the high potential for NPV when paying out of pocket, in all of the other scenarios we looked at, the NPV of paying out of pocket was lower than that of saving up or taking out a loan.  This is due to the high cost of construction making paying for an optimal elevation without some type of finanical plan out of reach even for wealthy individuals.  This is the only scenario where NPV of paying out of pocket is higher than loans or saving because it's the only one where this strategy was able to be used to its full potential.
+Inspite of the high potential for NPV when paying out of pocket, in all of the other scenarios we looked at, the NPV of paying out of pocket was lower than that of saving up or taking out a loan.  This is due to the high cost of construction making paying for an optimal elevation without some type of finanical plan out of reach even for wealthy individuals.  The Ultra-high savings individual is the only scenario where the NPV of paying out of pocket is higher than loans or saving because it's the only one where this strategy was able to be used to its full potential.
 
 # Conclusions
 
